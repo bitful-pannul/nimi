@@ -4,6 +4,10 @@
 
 Eventually integrate into pongo, but let's try a naive approach first.
 
+2 main branches currently:
+- [mode/ship-sigs](https://github.com/bitful-pannul/nimi/tree/mode/ship-sig)
+- [mode/uq-sigs](https://github.com/bitful-pannul/nimi/tree/mode/uq-sig)     <- probably the way forward
+
 Mint a username&picture. 
 `:nimi &nimi-action [%mint name=@t pfp=@t nft=@ux address=@ux]`
 
