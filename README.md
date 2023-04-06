@@ -1,5 +1,8 @@
 ## %nimi
 
+mode/uqbar-sig
+[optional branch mode/ship-sig]
+
 > Simple usernames & pfp:s on uqbar. 
 
 Eventually integrate into pongo, but let's try a naive approach first.
@@ -7,9 +10,9 @@ Eventually integrate into pongo, but let's try a naive approach first.
 Mint a username&picture. 
 `:nimi &nimi-action [%mint name=@t pfp=@t nft=@ux address=@ux]`
 
-this handles name, checks src.bowl, signs our-address with ship, then posts a tx to %minter contract
+this handles name, checks src.bowl, sends a poke to sign a typed-message to wallet, then posts a tx to %minter contract
 
-then upon successful sequencer receipt we can store this in profile in our state.
+then upon successful sequencer receipt&wallet-update we can store this in profile in our state.
 
 
 ask someone for his username/pfp
@@ -17,17 +20,19 @@ ask someone for his username/pfp
 ```=hoon
 :nimi &nimi-action [%whodis =ship]	
 get a poke-back 
-[%disme item=@ux address=@ux]
+[%disme item=@ux address=@ux sig=@ux]
 ::
-=/  i  %-  scry-state  item
-?>  =(holder.i address)		:: get address like pongo
+=/  i  %-  scry-state  item	                 :: check if nedesssary
+?>  =(holder.i address)		                 :: get address like pongo
 =/  data  ;;(nft:sur:nft noun.i)
 =/  name  (~(got by properties.data) %name)
-=/  sigg  (~(got by properties.data) %ship-sig)  ::  in @t format, there's an atom inside, ..?
 ::
-=/  shipsig  ;;([@ux @p @ud] (cue `atom-format`sigg))
+::  domain & type parts of signed message are pre-defined in /lib, message is @p
+::  in uqbar-validate message:sig is `@ux`(sham typed-message)
 :: 
-=/  valid   (validate:sig our.bowl shipsig hash=address now)
+=/  valid   
+  %+  uqbar-validate:sig 
+	[address (sham [domain:lib type:lib src.bowl]) sig]
 ?:  =(%.y valid)
 	 state(valid valid)
 state(couldn't verify)
@@ -43,3 +48,5 @@ initial nameservice collection `0xf9c0.f5a5.7904.b0e3.42e3.2e55.c4b4.f98f.82cc.f
 
 >>> todo: check if `ship-sigs` have nasty edge cases.
 	e.g no life / rift, alien not in %jael peers.
+
+	> might not need ship sigs at all, if an address owns the pfp/username, and has signed a message with @p in hash, and that matches the src.bowl where it's coming from, it's enough. doesn't need to be on chain (necessarily.)
