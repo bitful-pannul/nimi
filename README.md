@@ -5,7 +5,7 @@ Simple usernames & pfp:s on uqbar.
 Eventually integrate into pongo, but let's try a naive approach first.
 
 Mint a username/picture. [picture from URI will be a bit of a pain]
-call :nimi &nimi-action [%mint name=@t pfp=@t]
+call :nimi &nimi-action [%mint name=@t pfp=@t nft=@ux address=@ux]
 	handles name, checks src.bowl, then posts a tx to %minter contract, that will store ship-sig
 	done, store (map @p [@ux @t @t])  :: the 2 @t:s are kinda optional, can fetch from chain-state
 	store in our %social-graph
@@ -35,3 +35,8 @@ opening the profile/first contact on pongo will emit poke:
 
 > todo: check if `ship-sig`:s have nasty edge cases.
 	e.g no life / rift, alien not in %jael peers.
+
+%minter/hoon deployed on `0xa3fe.e174.a884.4777.41f6.860a.0e8d.ec56.6198.07a8.661a.2cf5.5c65.5ad9.40d4.5916`
+nft contract on `0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae`
+
+initial nameservice collection on `0xf9c0.f5a5.7904.b0e3.42e3.2e55.c4b4.f98f.82cc.fce5.9f34.aa49.917e.4877.3a57.6ddc`
