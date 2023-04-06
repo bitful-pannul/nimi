@@ -1,5 +1,5 @@
 /-  *nimi
-/+  wallet=zig-wallet, smart=zig-sys-smart, default-agent, dbug
+/+  wallet=zig-wallet, smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
 |%
 +$  versioned-state
   $%  state-0
@@ -64,13 +64,14 @@
     state
     :: 
       %disme
+    :: scry chain, validate,
     :: add to social-graph + friends state.
     !!
       %mint
     ?>  =(our.bowl src.bowl)
     :: mint a name nft on the specified contract. todo helper func
-    =/  sigg  'oh yeah'
-    ::  call (sign:sig/zig), import ethereum libs etc
+    =/  sagg  (sign:sig our.bowl now.bowl address.act)
+    =/  sigg  (crip "{<(jam sagg)>}")  :: do better conversion
     :_  state  :_  ~
     :*  %pass  /nimi-mint
         %agent  [our.bowl %uqbar]
@@ -79,7 +80,7 @@
         :*  %transaction
             origin=`[%nimi /nimi-mint]
             from=address.act
-            contract=nft-contract
+            contract=minter-contract
             town=0x0
             :-  %noun
             :*  %mint
@@ -106,6 +107,8 @@
         :_  state
         ~
       ::  
+      ::  do a ~pening-mint, then when successful receipt, can put result into state.
+      ::  might need the specific minted @ux item too.
       :_  state
       ~
     ==
