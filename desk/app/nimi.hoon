@@ -60,25 +60,38 @@
       :-  ~[[%pass /whodis %agent [src.bowl %nimi] %poke %nimi-action !>([%whodis ship.act])]]
       state
     ::  someone asking us
-    :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme nft.me address.me])]]
+    ?~  sig.me  `state
+    :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme nft.me address.me u.sig.me])]]
     state
     :: 
       %disme
     :: scry chain, validate,
     :: add to social-graph + friends state.
     !!
+      %sign-ship
+    ?>  =(src.bowl our.bowl)
+    :_  state  :_  ~
+    :*  %pass   /sign-ship
+        %agent  [our.bowl %uqbar]
+        %poke   %wallet-poke
+        !>
+        :*  %sign-typed-message
+            from=address.act
+            domain=nimi-domain
+            type=nimi-type
+            message=src.bowl
+    ==  ==
+    ::
       %mint
     ?>  =(our.bowl src.bowl)
-    :: mint a name nft on the specified contract. todo helper func
-    =/  sagg  (sign:sig our.bowl now.bowl address.act)
-    =/  sigg  (crip "{<(jam sagg)>}")  :: do better conversion
+    :: mint a name nft on the specified contract.
     :_  state  :_  ~
-    :*  %pass  /nimi-mint
+    :*  %pass   /nimi-mint
         %agent  [our.bowl %uqbar]
-        %poke  %wallet-poke
+        %poke   %wallet-poke
         !>
         :*  %transaction
-            origin=`[%nimi /nimi-mint]
+            origin=`[%nimi /mint-name]
             from=address.act
             contract=minter-contract
             town=0x0
@@ -87,9 +100,7 @@
                 address=nft.act
                 name=name.act
                 pfp=pfp.act
-                ship-sig=sigg
-    ==  ==  ==  
-    ::
+    ==  ==  == 
   ==
 ::
 ++  handle-wallet-update
@@ -100,9 +111,10 @@
     ?>  ?=(^ origin.update)
     ::
     ?+    q.u.origin.update  ~|("got receipt from weird origin" !!)
-        [%mint ~]
+        [%mint-name ~]
       =/  modified=(list item:smart)  (turn ~(val by modified.output.update) tail)
       ::
+      ~&  >>>  modified
       ?.   =(%0 errorcode.output.update)
         :_  state
         ~
@@ -112,5 +124,13 @@
       :_  state
       ~
     ==
+      %signed-message
+      ::
+      :: store whole typed-message somewhere? or just the `@ux`sham of it like %wallet
+      ?~  sig.me
+        :_  state(sig.me `sig.update)
+        ~
+      ::    if sig already exists, more logic needed
+      `state
   ==
 --
