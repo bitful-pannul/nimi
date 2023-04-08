@@ -61,11 +61,17 @@
       state
     ::  someone asking us
     ?~  sig.me  `state
-    :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme nft.me address.me u.sig.me])]]
+    :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]]
     state
     :: 
       %disme
     :: scry chain, validate,
+    ::  =/  item  .^(* %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)   ::(need (scry-state:smart item.act))
+    ::  ~&  "item: {<item>}"
+    ::: ?>  =(%.y -.item) :: assert item is data
+    ::  ?>  =(holder.item address.act)
+    ::  ?>  (uqbar-validate:sig address.act (sham nimi-domain nimi-type src.bowl) sig.act)
+    ::
     :: add to social-graph + friends state.
     !!
       %sign-ship

@@ -11,7 +11,7 @@
     friends=(list profile)
   ==
 ::
-+$  profile  [name=@t pfp=@t address=@ux nft=@ux sig=(unit sig)]
++$  profile  [name=@t pfp=@t address=@ux item=@ux sig=(unit sig)]
 ::
 +$  action
   $%
