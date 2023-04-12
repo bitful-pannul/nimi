@@ -1,4 +1,4 @@
-/-  *nimi
+/-  *nimi, indexer=zig-indexer
 /+  wallet=zig-wallet, smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
 |%
 +$  versioned-state
@@ -66,14 +66,31 @@
     :: 
       %disme
     :: scry chain, validate,
-    ::  =/  item  .^(* %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)   ::(need (scry-state:smart item.act))
-    ::  ~&  "item: {<item>}"
-    ::: ?>  =(%.y -.item) :: assert item is data
-    ::  ?>  =(holder.item address.act)
-    ::  ?>  (uqbar-validate:sig address.act (sham nimi-domain nimi-type src.bowl) sig.act)
+    =/  up  .^(update:indexer %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)   ::(need (scry-state:smart item.act))
     ::
-    :: add to social-graph + friends state.
-    !!
+    ?>  ?=(%newest-item -.up)
+    =+  item=item.up
+    ~&  "item: {<item>}"
+    ::
+    ?>  ?=(%.y -.item)                :: assert item is data
+    ?>  =(holder.p.item address.act)
+    ?>  =(source.p.item nft-contract)
+    ::
+    =/  nft  ;;(nft noun.p.item)
+    ~&  "nounnft: {<nft>}"
+    =/  name  (~(got by properties.nft) %name)
+    =/  pfp   (~(got by properties.nft) %pfp)
+    ::  the rest?
+    ::  
+    ?>  %-  uqbar-validate:sig
+        :+   address.act
+          (sham nimi-domain nimi-type [src.bowl (cat 3 'nimi' (scot %p src.bowl))]) :: signing [=ship salt=@]
+        sig.act
+    `state
+    ::  add to social-graph + friends state.
+    ::
+    ::
+    ::
       %sign-ship
     ?>  =(src.bowl our.bowl)
     :_  state  :_  ~
@@ -85,7 +102,7 @@
             from=address.act
             domain=nimi-domain
             type=nimi-type
-            message=src.bowl
+            message=[our.bowl (cat 3 'nimi' (scot %p our.bowl))]
     ==  ==
     ::
       %mint
