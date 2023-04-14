@@ -57,22 +57,27 @@
       %whodis
     ::  us asking someone
     ?:  =(src.bowl our.bowl)  
-      :-  ~[[%pass /whodis %agent [src.bowl %nimi] %poke %nimi-action !>([%whodis ship.act])]]
+      :-  ~[[%pass /whodis %agent [ship.act %nimi] %poke %nimi-action !>([%whodis ship.act])]]
       state
     ::  someone asking us
     ?~  sig.me  `state
     :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]]
     state
-    :: 
+    ::
+      %set-profile
+    ?>  =(our.bowl src.bowl)
+    :_  state(me [name.me pfp.me address.act item.act ~])
+    :~  [%pass /pokeback %agent [our.bowl %nimi] %poke %nimi-action !>([%sign-ship address.act])]
+    == 
       %disme
     :: scry chain, validate,
-    =/  up  .^(update:indexer %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)   ::(need (scry-state:smart item.act))
+    =/  up  .^(update:indexer %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)
     ::
     ?>  ?=(%newest-item -.up)
     =+  item=item.up
     ~&  "item: {<item>}"
     ::
-    ?>  ?=(%.y -.item)                :: assert item is data
+    ?>  ?=(%.y -.item)                
     ?>  =(holder.p.item address.act)
     ?>  =(source.p.item nft-contract)
     ::
@@ -80,16 +85,17 @@
     ~&  "nounnft: {<nft>}"
     =/  name  (~(got by properties.nft) %name)
     =/  pfp   (~(got by properties.nft) %pfp)
-    ::  the rest?
+    ::  the rest of properties? viewable by scry/explorer?
     ::  
     ?>  %-  uqbar-validate:sig
         :+   address.act
           (sham nimi-domain nimi-type [src.bowl (cat 3 'nimi' (scot %p src.bowl))]) :: signing [=ship salt=@]
         sig.act
-    `state
-    ::  add to social-graph + friends state.
     ::
-    ::
+    :_  state(friends (snoc friends [name pfp address.act item.act `sig.act]))
+    :~  [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /nicknames src.bowl item.act]])]
+    ==
+    ::  
     ::
       %sign-ship
     ?>  =(src.bowl our.bowl)
@@ -99,6 +105,7 @@
         %poke   %wallet-poke
         !>
         :*  %sign-typed-message
+            origin=`[%nimi /signed-message]       :: note needs PR merge for it to work.
             from=address.act
             domain=nimi-domain
             type=nimi-type
@@ -107,8 +114,14 @@
     ::
       %mint
     ?>  =(our.bowl src.bowl)
-    :: mint a name nft on the specified contract.
-    :_  state  :_  ~
+    ::  mint a name nft on the specified contract.
+    =/  props  %-  make-pmap:smart
+    ^-  (list [@tas @t])
+    :~  [%name name.act]
+        [%pfp pfp.act]
+    ==
+    :_  state(pending `[name.act pfp.act address.act nft.act ~])  
+    :_  ~
     :*  %pass   /nimi-mint
         %agent  [our.bowl %uqbar]
         %poke   %wallet-poke
@@ -120,10 +133,11 @@
             town=0x0
             :-  %noun
             :*  %mint
-                address=nft.act
-                name=name.act
-                pfp=pfp.act
-    ==  ==  == 
+                nft=nft.act
+                uri='uri.com'
+                properties=props
+                ship=`our.bowl
+    ==  ==  ==
   ==
 ::
 ++  handle-wallet-update
@@ -135,17 +149,14 @@
     ::
     ?+    q.u.origin.update  ~|("got receipt from weird origin" !!)
         [%mint-name ~]
-      =/  modified=(list item:smart)  (turn ~(val by modified.output.update) tail)
+      ?.  =(%0 errorcode.output.update)
+        `state(pending ~)
       ::
-      ~&  >>>  modified
-      ?.   =(%0 errorcode.output.update)
-        :_  state
-        ~
-      ::  
-      ::  do a ~pening-mint, then when successful receipt, can put result into state.
-      ::  might need the specific minted @ux item too.
-      :_  state
-      ~
+      ?~  pending  `state
+      ::
+      :_  state(me u.pending)
+      :~  [%pass /pokeback %agent [our.bowl %nimi] %poke %nimi-action !>([%sign-ship address.u.pending])]
+      ==
     ==
       %signed-message
       ::
@@ -153,7 +164,7 @@
       ?~  sig.me
         :_  state(sig.me `sig.update)
         ~
-      ::    if sig already exists, more logic needed
+      :: if sig already exists, more logic needed
       `state
   ==
 --

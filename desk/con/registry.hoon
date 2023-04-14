@@ -44,7 +44,6 @@
     ~
   ==
 ++  read
-  ::  todo add reads 
   |=  =pith
   ~
 --
