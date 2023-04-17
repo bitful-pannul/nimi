@@ -1,7 +1,7 @@
 /+  *zig-sys-smart
 ::
 ::  Proxy contract for minting name/pfp nft:s 
-::  Combined with a pure nft registry contract.
+::  Issues %resolver items for reverse lookups
 ::  
 ::
 |_  =context
@@ -16,12 +16,17 @@
   ^-  (quip call diff)
   ?-    -.act
       %mint
-    ::  
-    ::  
-    =+  `item`(need (scry-state nft.act))
-    =/  meta  (husk metadata - `this.context ~)
-    =/  salt    (cat 3 salt.meta (scot %ud +(supply.noun.meta)))
-    =/  item-id  (hash-data nft.act id.caller.context town.context salt)
+    ::
+    =/  name  (~(got by properties.act) %name)
+    =/  =id  (hash-data 0x0 nft.act town.context (cat 3 nft.act name))
+    =/  =item
+      :*  %&  id
+          0x0
+          nft.act
+          town.context
+          (cat 3 nft.act name) 
+          %resolver  [id.caller.context ship.act]
+      ==  
     ::  
     =/  mintcalls
       :~  :+  nft-contract
@@ -30,18 +35,9 @@
               nft.act
               ~[[id.caller.context [uri.act properties.act %.y]]]
           ==
-          ::
-          :+  registry-contract
-            town.context
-          :-  %store
-          [ship.act item-id]      :: how do we fetch the nft that's about to be minted from the above call?
-                                  :: one option is husk the nft.act metadata state, find the salt, current supply,
-                                  :: and generate the new item-id based on that salt. 
-                                  :: might be unreliable though. what if someone mints inbetween and we send the wrong info to registry?
-                                  :: %on-mint would be an interesting function to implement as well. 
       ==
     ::
-    :_  (result ~ ~ ~ ~)
+    :_  (result ~ item^~ ~ ~)
     mintcalls
   ==
 ++  read

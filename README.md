@@ -1,15 +1,21 @@
 ## %nimi
 
-mode/uqbar-sig
-[optional branch mode/ship-sig]
-
 > Simple usernames & pfp:s on uqbar. 
 
-Eventually integrate into pongo, but let's try a naive approach first.
+Contracts enable this: 
 
-2 main branches currently:
-- [mode/ship-sigs](https://github.com/bitful-pannul/nimi/tree/mode/ship-sig)
-- [mode/uq-sigs](https://github.com/bitful-pannul/nimi/tree/mode/uq-sig)     <- probably the way forward
+#### %resolver
+	items, holder & source always the nft-name collection.
+	id=(hash-data nft-source nft-source town `@`'the-name.uqq')
+	noun: [=address ship=unit(@p) subdomains=(list @t)]
+
+if we mint these resolver items during mint of names, it enables reverse lookup.
+
+#### %minter
+	all this does is take in at least a 'name' property, and a 'pfp'/'uri' one too.
+	then it posts a mint to the defined nft-item, and mints a resolver for it too.
+
+hmm. source & holder, will they match up if we mint from external contract? 
 
 Mint a username&picture. 
 `:nimi &nimi-action [%mint name=@t pfp=@t nft=@ux address=@ux]`
@@ -26,21 +32,26 @@ ask someone for his username/pfp
 get a poke-back 
 [%disme item=@ux address=@ux sig=@ux]
 ::
-=/  i  %-  scry-state  item	                 :: check if nedesssary
-?>  =(holder.i address)		                 :: get address like pongo
-=/  data  ;;(nft:sur:nft noun.i)
-=/  name  (~(got by properties.data) %name)
+  =/  up  .^(update:indexer %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)
+  ::
+  ?>  ?=(%newest-item -.up)
+  =+  item=item.up
+  ::
+  ?>  ?=(%.y -.item)
+  ?>  =(holder.p.item address.act)
+  ?>  =(source.p.item nft-contract)
+  ::
+  =/  nft  ;;(nft noun.p.item)
+  =/  name  (~(got by properties.nft) %name)
+  =/  pfp   (~(got by properties.nft) %pfp)
+  ::  the rest of properties
+  ::
+  ?>  %-  uqbar-validate:sig
+      :+   address.act
+        (sham nimi-domain nimi-type [src.bowl (cat 3 'nimi' (scot %p src.bowl))]) :: signing [=ship salt=@]
+      sig.act
 ::
-::  domain & type parts of signed message are pre-defined in /lib, message is @p
-::  in uqbar-validate message:sig is `@ux`(sham typed-message)
-:: 
-=/  valid   
-  %+  uqbar-validate:sig 
-	[address (sham [domain:lib type:lib src.bowl]) sig]
-?:  =(%.y valid)
-	 state(valid valid)
-state(couldn't verify)
-  ```
+```
 	
 > verified, store in state&social-graph, display as username, optional back to @p. (settings & default).
 
@@ -50,7 +61,3 @@ nft contract `0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3
 
 initial nameservice collection `0xf9c0.f5a5.7904.b0e3.42e3.2e55.c4b4.f98f.82cc.fce5.9f34.aa49.917e.4877.3a57.6ddc`
 
->>> todo: check if `ship-sigs` have nasty edge cases.
-	e.g no life / rift, alien not in %jael peers.
-
-	> might not need ship sigs at all, if an address owns the pfp/username, and has signed a message with @p in hash, and that matches the src.bowl where it's coming from, it's enough. doesn't need to be on chain (necessarily.)
