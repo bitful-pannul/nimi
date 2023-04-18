@@ -1,39 +1,53 @@
 /+  *zig-sys-smart
 ::
+::  minter.hoon  [UQ| DAO]
+::  
 ::  Proxy contract for minting name/pfp nft:s 
 ::  Issues %resolver items for reverse lookups
-::  
+::    
+::  To find the address of a username, get the item-id:
+::  (hash-data resolver-contract nft-collection town username)
+::
+::  and then look in the noun of that item [=address ship=(unit @p)]
+::
 ::
 |_  =context
 ::
 +$  action
-  $%  [%mint nft=id uri=@t properties=(pmap @tas @t) ship=(unit @p)]
-      :: uri==pfp or uri!=pfp?
+  $%  [%mint nft=id uri=@t name=@t ship=(unit @p)]
   ==
 ::
 ++  write
+  ~>  %got-start
   |=  act=action
   ^-  (quip call diff)
   ?-    -.act
       %mint
+    ~>  %in-mint
     ::
-    =/  name  (~(got by properties.act) %name)
-    =/  =id  (hash-data 0x0 nft.act town.context (cat 3 nft.act name))
+    =/  =id  (hash-data this.context nft.act town.context name.act)
+    ~>  %got-name
     =/  =item
       :*  %&  id
-          0x0
+          this.context
           nft.act
           town.context
-          (cat 3 nft.act name) 
+          name.act
           %resolver  [id.caller.context ship.act]
       ==  
     ::  
+    =/  propmap  %-  make-pmap
+      ^-  (list [@tas @t])
+      ~[[%name name.act]]
+    ::
+    ~>  %item-created
     =/  mintcalls
       :~  :+  nft-contract
             town.context
           :*  %mint
               nft.act
-              ~[[id.caller.context [uri.act properties.act %.y]]]
+              ^-  (list [address [@t (pmap @tas @t) ?]])
+              ~[[id.caller.context [uri.act propmap %.y]]]
           ==
       ==
     ::
@@ -45,19 +59,6 @@
   ~
 ::
 ++  nft-contract        0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae 
-::
-++  registry-contract   0x1b1c.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae
-::
-+$  metadata
-  $:  name=@t
-      symbol=@t
-      properties=(pset @tas)
-      supply=@ud
-      cap=(unit @ud)  
-      mintable=?      
-      minters=(pset address)
-      deployer=id
-      salt=@
-  ==
+::  
 ::
 --
