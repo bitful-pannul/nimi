@@ -60,13 +60,19 @@
       :-  ~[[%pass /whodis %agent [ship.act %nimi] %poke %nimi-action !>([%whodis ship.act])]]
       state
     ::  someone asking us
-    ?~  sig.me  `state
+    ?~  sig.me
+      :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%notyet ~])]]
+      state
+    ::
     :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]]
     state
     ::
+      %notyet
+    :: perculate up to frontend that @p doesn't have username yet... ahhh wen remote scry
+    !! 
       %set-profile
     ?>  =(our.bowl src.bowl)
-    :_  state(me [name.me pfp.me address.act item.act ~])
+    :_  state(me [name.me uri.me address.act item.act ~])
     :~  [%pass /pokeback %agent [our.bowl %nimi] %poke %nimi-action !>([%sign-ship address.act])]
     == 
       %disme
@@ -84,16 +90,15 @@
     =/  nft  ;;(nft noun.p.item)
     ~&  "nounnft: {<nft>}"
     =/  name  (~(got by properties.nft) %name)
-    =/  pfp   (~(got by properties.nft) %pfp)
-    ::  the rest of properties? viewable by scry/explorer?
     ::  
     ?>  %-  uqbar-validate:sig
         :+   address.act
           (sham nimi-domain nimi-type [src.bowl (cat 3 'nimi' (scot %p src.bowl))]) :: signing [=ship salt=@]
         sig.act
     ::
-    :_  state(friends (snoc friends [name pfp address.act item.act `sig.act]))
-    :~  [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /nicknames src.bowl item.act]])]
+    :_  state(friends (snoc friends [name uri.nft address.act item.act `sig.act]))
+    :~  [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /nickname src.bowl item.act]])]
+        [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /address src.bowl address.act]])]
     ==
     ::  
     ::
@@ -114,13 +119,8 @@
     ::
       %mint
     ?>  =(our.bowl src.bowl)
-    ::  mint a name nft on the specified contract.
-    =/  props  %-  make-pmap:smart
-    ^-  (list [@tas @t])
-    :~  [%name name.act]
-        [%pfp pfp.act]
-    ==
-    :_  state(pending `[name.act pfp.act address.act nft.act ~])  
+    ::  mint a username/pfp
+    :_  state(pending `[name.act uri.act address.act nft.act ~])  
     :_  ~
     :*  %pass   /nimi-mint
         %agent  [our.bowl %uqbar]
@@ -134,9 +134,9 @@
             :-  %noun
             :*  %mint
                 nft=nft.act
-                uri='uri.com'
-                properties=props
-                ship=`our.bowl
+                uri=uri.act
+                name=name.act
+                ship=?:(ship.act `our.bowl ~)
     ==  ==  ==
   ==
 ::

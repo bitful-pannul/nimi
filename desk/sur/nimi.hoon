@@ -13,7 +13,7 @@
     pending=(unit profile)
   ==
 ::
-+$  profile  [name=@t pfp=@t address=@ux item=@ux sig=(unit sig)]
++$  profile  [name=@t uri=@t address=@ux item=@ux sig=(unit sig)]
 ::
 +$  action
   $%
@@ -21,7 +21,8 @@
     [%set-profile item=@ux address=@ux]
     [%sign-ship address=@ux]
     [%disme item=@ux address=@ux =sig]              :: leave actual data to scrying chain?
-    [%mint name=@t pfp=@t nft=@ux address=@ux]      :: more props?
+    [%notyet ~]
+    [%mint name=@t uri=@t nft=@ux address=@ux ship=?]      :: more props?
   ==
 ::
 +$  sig  [v=@ r=@ s=@]
