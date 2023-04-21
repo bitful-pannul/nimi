@@ -101,7 +101,7 @@
       [%metadata asset-metadata]
       [%account =caller:smart]  ::  tuple of [address nonce zigs-account]
       [%addresses saved=(set address:smart)]
-      [%signed-message =typed-message:smart =sig:smart]
+      [%signed-message =origin =typed-message:smart =sig:smart]
       $:  %unfinished-transaction
           =origin
           =transaction:smart

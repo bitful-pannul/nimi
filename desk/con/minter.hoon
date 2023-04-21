@@ -1,4 +1,5 @@
 /+  *zig-sys-smart
+/=  lib  /con/lib/minter
 ::
 ::  minter.hoon  [UQ| DAO]
 ::  
@@ -13,16 +14,11 @@
 ::
 |_  =context
 ::
-+$  action
-  $%  [%mint nft=id uri=@t name=@t ship=(unit @p)]
-  ==
-::
 ++  write
-  |=  act=action
+  |=  act=action:lib
   ^-  (quip call diff)
   ?-    -.act
       %mint
-    ::
     =/  =id  (hash-data this.context nft.act town.context name.act)
     =/  =item
       :*  %&  id
@@ -32,28 +28,20 @@
           name.act
           %lookup  [id.caller.context ship.act]
       ==  
-    ::  
     =/  propmap  %-  make-pmap
-      ^-  (list [@tas @t])
       ~[[%name name.act]]
     ::
     =/  mintcalls=(list call)
-      :~  :+  nft-contract
+      :~  :+  nft-contract:lib 
             town.context
           :*  %mint
               nft.act
-              ^-  (list [address [@t (pmap @tas @t) ?]])
               ~[[id.caller.context [uri.act propmap %.y]]]
-          ==
-      ==
-    ::
-    :_  (result ~ [item ~] ~ ~)
-    mintcalls
+      ==  ==
+    :-  mintcalls
+    (result ~ [item ~] ~ ~)
   ==
 ++  read
   |=  =pith
-  ~
-::
-++  nft-contract        0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae 
-::  
+  ~    
 --
