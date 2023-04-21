@@ -1,8 +1,11 @@
 /-  *nimi, indexer=zig-indexer
 /+  wallet=zig-wallet, smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
 |%
-+$  versioned-state
-  $%  state-0
++$  state-0
+  $:
+    me=profile
+    pending=(unit profile)
+    =niccbook
   ==
 ::
 +$  card  card:agent:gall
@@ -44,7 +47,7 @@
 ++  on-agent  on-agent:def
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek   handle-scry:hc
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
@@ -56,28 +59,38 @@
   ?-    -.act
       %whodis
     ::  us asking someone
-    ?:  =(src.bowl our.bowl)  
-      :-  ~[[%pass /whodis %agent [ship.act %nimi] %poke %nimi-action !>([%whodis ship.act])]]
-      state
+    ?:  =(src.bowl our.bowl) 
+      :_  state  :_  ~
+      :*  %pass   /whodis
+          %agent  [ship.act %nimi]
+          %poke   %nimi-action
+          !>([%whodis our.bowl])
+      ==
     ::  someone asking us
-    ?~  sig.me
-      :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%notyet ~])]]
-      state
+    ?~  sig.me  `state
     ::
-    :-  ~[[%pass /disme %agent [src.bowl %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]]
-    state
+    :_  state  :_  ~
+    :*  %pass   /disme
+        %agent  [src.bowl %nimi]
+        %poke   %nimi-action
+        !>([%disme item.me address.me sig.me])
+    ==
     ::
-      %notyet
-    :: perculate up to frontend that @p doesn't have username yet... ahhh wen remote scry
-    !! 
       %set-profile
     ?>  =(our.bowl src.bowl)
     :_  state(me [name.me uri.me address.act item.act ~])
-    :~  [%pass /pokeback %agent [our.bowl %nimi] %poke %nimi-action !>([%sign-ship address.act])]
-    == 
+    :~  :*  %pass   /pokeback 
+            %agent  [our.bowl %nimi] 
+            %poke   %nimi-action 
+            !>([%sign-ship address.act])
+    ==  ==
       %disme
     :: scry chain, validate,
-    =/  up  .^(update:indexer %gx /(scot %p our.bowl)/uqbar/(scot %da now.bowl)/indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun)
+    =/  up  
+      .^  update:indexer  %gx
+        (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
+        /indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun
+      ==
     ::
     ?>  ?=(%newest-item -.up)
     =+  item=item.up
@@ -92,14 +105,26 @@
     =/  name  (~(got by properties.nft) %name)
     ::  
     ?>  %-  uqbar-validate:sig
+        =+  salt=(cat 3 'nimi' (scot %p src.bowl))
         :+   address.act
-          (sham nimi-domain nimi-type [src.bowl (cat 3 'nimi' (scot %p src.bowl))]) :: signing [=ship salt=@]
+          (sham nimi-domain nimi-type [src.bowl salt]) :: signing [=ship salt=@]
         sig.act
     ::
-    :_  state(friends (snoc friends [name uri.nft address.act item.act `sig.act]))
-    :~  [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /nickname src.bowl item.act]])]
-        [%pass /add-tag %agent [our.bowl %social-graph] %poke %social-graph-edit !>([%nimi [%add-tag /address src.bowl address.act]])]
-    ==
+    ::  note: try =.  instead
+    :_  %=    state
+          niccbook 
+          (~(put by niccbook) src.bowl [name uri.nft address.act item.act `sig.act])
+        ==
+    :~  :*  %pass  /add-tag
+            %agent  [our.bowl %social-graph]
+            %poke   %social-graph-edit
+            !>([%nimi [%add-tag /nickname [%ship src.bowl] [%address item.act]]])
+        ==
+        :*  %pass  /add-tag
+            %agent  [our.bowl %social-graph]
+            %poke   %social-graph-edit
+            !>([%nimi [%add-tag /address [%ship src.bowl] [%address address.act]]])
+    ==  ==
     ::  
     ::
       %sign-ship
@@ -110,7 +135,7 @@
         %poke   %wallet-poke
         !>
         :*  %sign-typed-message
-            origin=`[%nimi /signed-message]       :: note needs PR merge for it to work.
+            origin=`[%nimi /sign-ship]       :: note needs PR merge 0.1.4
             from=address.act
             domain=nimi-domain
             type=nimi-type
@@ -133,9 +158,9 @@
             town=0x0
             :-  %noun
             :*  %mint
-                nft=nft.act
-                uri=uri.act
-                name=name.act
+                nft.act
+                name.act
+                uri.act
                 ship=?:(ship.act `our.bowl ~)
     ==  ==  ==
   ==
@@ -154,17 +179,44 @@
       ::
       ?~  pending  `state
       ::
-      :_  state(me u.pending)
-      :~  [%pass /pokeback %agent [our.bowl %nimi] %poke %nimi-action !>([%sign-ship address.u.pending])]
+      :_  state(me u.pending)  :_  ~
+      :*  %pass  /pokeback
+          %agent  [our.bowl %nimi]
+          %poke   %nimi-action
+          !>([%sign-ship address.u.pending])
       ==
     ==
       %signed-message
+      ?>  ?=(^ origin.update)
+      ?>  =([%nimi /sign-ship] u.origin.update)
       ::
       :: store whole typed-message somewhere? or just the `@ux`sham of it like %wallet
       ?~  sig.me
-        :_  state(sig.me `sig.update)
+        :_  state(sig.me `sig.update, pending ~)
         ~
       :: if sig already exists, more logic needed
       `state
   ==
+::
+++  handle-scry
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+    path  ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
+    [%x %username @ ~]
+    ~&  "full path: {<path>}"
+    =/  username  (slav %tas i.t.t.path)
+    =+  lookupitem=(hash-data:smart minter-contract uqnames 0x0 username)
+    =/  up
+    .^  update:indexer  %gx
+        (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
+        /indexer/newest/item/(scot %ux 0x0)/(scot %ux lookupitem)/noun
+      ==
+    ?>  ?=(%newest-item -.up)
+    =+  item=item.up
+    ?>  ?=(%.y -.item)
+    ::
+    =/  data  ;;([@ux (unit @p)] noun.p.item)
+    ::  empty @p?
+    ``noun+!>(`noun`[%username data])
+  ==  
 --
