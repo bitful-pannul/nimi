@@ -163,6 +163,16 @@
                 uri.act
                 ship=?:(ship.act `our.bowl ~)
     ==  ==  ==
+    ::    
+      %find-ships
+    ?>  =(our.bowl src.bowl)
+    =/  pokes 
+    %+  turn  ships.act
+    |=  =ship
+    [%pass /whodis %agent [ship %nimi] %poke %nimi-action !>([%whodis ship])]
+    ::
+    :_  state
+    pokes
   ==
 ::
 ++  handle-wallet-update
@@ -202,8 +212,7 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
-    [%x %username @ ~]
-    ~&  "full path: {<path>}"
+      [%x %username @ ~]
     =/  username  (slav %tas i.t.t.path)
     =+  lookupitem=(hash-data:smart minter-contract uqnames 0x0 username)
     =/  up
@@ -211,12 +220,26 @@
         (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
         /indexer/newest/item/(scot %ux 0x0)/(scot %ux lookupitem)/noun
       ==
+    ?~  up  ``noun+!>(`noun`[%nouser ~])
     ?>  ?=(%newest-item -.up)
     =+  item=item.up
     ?>  ?=(%.y -.item)
     ::
     =/  data  ;;([@ux (unit @p)] noun.p.item)
     ::  empty @p?
-    ``noun+!>(`noun`[%username data])
-  ==  
+    ``noun+!>(`noun`data)
+  :: 
+      [%x %ship @ ~]
+    =/  ship  (slav %p i.t.t.path)
+    =/  user  (~(get by niccbook) ship)
+    ``noun+!>(`noun`user)
+    ::
+      [%x %ships @ ~]
+    =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
+    =/  users 
+      %+  turn  ships
+      |=  =ship
+      [ship (~(get by niccbook) ship)]
+    ``noun+!>(`noun`users)
+  ==
 --
