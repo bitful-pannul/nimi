@@ -1,5 +1,5 @@
-/-  *nimi, indexer=zig-indexer
-/+  wallet=zig-wallet, smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
+/-  *nimi, indexer=zig-indexer, wallet=zig-wallet
+/+  smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
 |%
 +$  state-0
   $:
@@ -64,7 +64,7 @@
       :*  %pass   /whodis
           %agent  [ship.act %nimi]
           %poke   %nimi-action
-          !>([%whodis our.bowl])
+          !>(`action`[%whodis ship.act])
       ==
     ::  someone asking us
     ?~  sig.me  `state
@@ -73,7 +73,7 @@
     :*  %pass   /disme
         %agent  [src.bowl %nimi]
         %poke   %nimi-action
-        !>([%disme item.me address.me sig.me])
+        !>(`action`[%disme item.me address.me u.sig.me])
     ==
     ::
       %set-profile
@@ -82,7 +82,7 @@
     :~  :*  %pass   /pokeback 
             %agent  [our.bowl %nimi] 
             %poke   %nimi-action 
-            !>([%sign-ship address.act])
+            !>(`action`[%sign-ship address.act])
     ==  ==
       %disme
     :: scry chain, validate,
@@ -105,9 +105,9 @@
     =/  name  (~(got by properties.nft) %name)
     ::  
     ?>  %-  uqbar-validate:sig
-        =+  salt=(cat 3 'nimi' (scot %p src.bowl))
+        =+  salt=(cat 3 'nimi' src.bowl)
         :+   address.act
-          (sham nimi-domain nimi-type [src.bowl salt]) :: signing [=ship salt=@]
+          (sham nimi-domain (sham nimi-type) salt) 
         sig.act
     ::
     ::  note: try =.  instead
@@ -118,12 +118,14 @@
     :~  :*  %pass  /add-tag
             %agent  [our.bowl %social-graph]
             %poke   %social-graph-edit
-            !>([%nimi [%add-tag /nickname [%ship src.bowl] [%address item.act]]])
+            !>  
+            [%nimi [%add-tag /nickname [%ship src.bowl] [%address item.act]]]
         ==
         :*  %pass  /add-tag
             %agent  [our.bowl %social-graph]
             %poke   %social-graph-edit
-            !>([%nimi [%add-tag /address [%ship src.bowl] [%address address.act]]])
+            !>
+            [%nimi [%add-tag /address [%ship src.bowl] [%address address.act]]]
     ==  ==
     ::  
     ::
@@ -133,24 +135,25 @@
     :*  %pass   /sign-ship
         %agent  [our.bowl %uqbar]
         %poke   %wallet-poke
-        !>
+        !>  ^-  wallet-poke:wallet
         :*  %sign-typed-message
-            origin=`[%nimi /sign-ship]       :: note needs PR merge 0.1.4
+            origin=`[%nimi /sign-ship]      :: note: needs PR merge 0.1.4
             from=address.act
             domain=nimi-domain
             type=nimi-type
-            message=[our.bowl (cat 3 'nimi' (scot %p our.bowl))]
+            message=(cat 3 'nimi' our.bowl)
     ==  ==
     ::
       %mint
     ?>  =(our.bowl src.bowl)
     ::  mint a username/pfp
+    ::  note: nft.act gets correctly set upon receipt
     :_  state(pending `[name.act uri.act address.act nft.act ~])  
     :_  ~
     :*  %pass   /nimi-mint
         %agent  [our.bowl %uqbar]
         %poke   %wallet-poke
-        !>
+        !>  ^-  wallet-poke:wallet
         :*  %transaction
             origin=`[%nimi /mint-name]
             from=address.act
@@ -183,17 +186,36 @@
     ?>  ?=(^ origin.update)
     ::
     ?+    q.u.origin.update  ~|("got receipt from weird origin" !!)
-        [%mint-name ~]
+        [%mint-name ~]      
       ?.  =(%0 errorcode.output.update)
         `state(pending ~)
       ::
       ?~  pending  `state
       ::
-      :_  state(me u.pending)  :_  ~
+      =/  modified=(list item:smart)  (turn ~(val by modified.output.update) tail)
+      ::  
+      =|  id=(unit id:smart)
+      =.  id
+        |-  ^+  id
+        ?~  modified  ~
+        =/  =item:smart  i.modified
+        ?.  ?&  ?=(%& -.item)
+                =(holder.p.item address.u.pending)
+                =(label.p.item %nft)
+                =(source.p.item nft-contract)
+            ==
+            $(modified t.modified)
+        `id.p.item
+      ::
+      ?~  id  `state
+      ::
+      =/  new  u.pending
+      =.  item.new  u.id
+      :_  state(me new)  :_  ~
       :*  %pass  /pokeback
           %agent  [our.bowl %nimi]
           %poke   %nimi-action
-          !>([%sign-ship address.u.pending])
+          !>([%sign-ship address.new])
       ==
     ==
       %signed-message
@@ -201,11 +223,8 @@
       ?>  =([%nimi /sign-ship] u.origin.update)
       ::
       :: store whole typed-message somewhere? or just the `@ux`sham of it like %wallet
-      ?~  sig.me
-        :_  state(sig.me `sig.update, pending ~)
-        ~
-      :: if sig already exists, more logic needed
-      `state
+      :_  state(sig.me `sig.update, pending ~)
+      ~
   ==
 ::
 ++  handle-scry

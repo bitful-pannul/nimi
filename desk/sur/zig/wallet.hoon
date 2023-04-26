@@ -133,7 +133,7 @@
       [%derive-new-address hdpath=tape nick=@t]
       [%delete-address address=@ux]
       [%edit-nickname address=@ux nick=@t]
-      [%sign-typed-message from=address:smart domain=id:smart type=json msg=*]
+      [%sign-typed-message =origin from=address:smart domain=id:smart type=json msg=*]
       [%add-tracked-address address=@ux nick=@t]
       [%set-share-prefs =share-prefs]
       ::  testing and internal
