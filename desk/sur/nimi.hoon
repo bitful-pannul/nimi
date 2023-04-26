@@ -2,7 +2,6 @@
 ::  contract agnostic
 ::
 ::
-::
 /+  smart=zig-sys-smart
 |%
 ::
@@ -20,6 +19,14 @@
     [%find-ships ships=(list ship)]
   ==
 ::
++$  update  :: scries, and sub updates.
+  $%
+    [%ships ships=(list [ship (unit profile)])]
+    [%ship =ship name=@t uri=@t]
+    [%new-user =ship name=@t uri=@t]
+    [%user address=@ux ship=(unit @p)]
+    [%no-user ~]
+  ==
 +$  sig  [v=@ r=@ s=@]
 ::
 +$  nft         :: from con/lib

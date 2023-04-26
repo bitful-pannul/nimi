@@ -2,21 +2,21 @@
 ::  
 ::
 ::  todo revise bowl necessities => move into wrapper agent/core  
+/-  *nimi
 |% 
   +$  profile        [name=@t uri=@t address=@ux item=@ux sig=(unit [@ @ @])]
   ::
   ++  wrap-ship
   |=  [=ship our=@p now=@da]
-  ::  ^-  [@p (unit profile)]
+  ^-  (unit profile)
+  ::  return ship too? [@p (unit profile)]
   =/  up  .^  *  %gx
         (scot %p our)  %nimi  (scot %da now)
         /ship/(scot %p ship)/noun
       ==
   ::
-  ?~  up  [ship ~]
-  =/  prof  ;;((unit profile) up)
-  ?~  prof  [ship ~]
-  [ship prof]
+  ?~  up  ~
+  ;;((unit profile) up)
   ::
   ++  wrap-ships
   |=  [ships=(list ship) our=@p now=@da]
@@ -38,18 +38,58 @@
   ::
   ++  enjs-username
     |=  [=ship our=@p now=@da]
-    =+  user=+:(wrap-ship ship our now)
+    =+  user=(wrap-ship ship our now)
     ?~  user  ~
     (scot %t name.u.user)
   ::
   ++  enjs-userpic
     |=  [=ship our=@p now=@da]
-    =+  user=+:(wrap-ship ship our now)
+    =+  user=(wrap-ship ship our now)
     ?~  user  ~
     (scot %t uri.u.user)
   ::
-  ::  then in %pongo or %pokur we could import /+  nimi
-  ::  then when passing change wrap ships with =/  [users unknown]  (wrap-ships:lib ships our.bowl now.bowl)
-  ::  and then also [%pass /find-ships [our.bowl %nimi] %poke %nimi-action !>([%find-ships unknown])]
-  ::  mayb...
+  ++  enjs-update
+    =,  enjs:format
+    |=  up=update
+    ^-  json
+    %+  frond  -.up
+    ?-    -.up
+        %ships
+        ::  TODO handle empty name & uri well
+      %-  pairs
+      %+  turn  ships.up
+      |=  [s=@p p=(unit profile)]
+      :-  `@tas`(scot %p s)
+      %-  pairs
+      :~  ::  ['ship' s+(scot %p ship)]
+          ['name' ?~(p [%s ''] s+(scot %tas name.u.p))]
+          ['uri' ?~(p [%s ''] s+(scot %tas uri.u.p))]
+          ::  could add item, address and sig too.
+      ==
+    ::
+        %ship
+      %-  pairs
+      :~  [%ship s+(scot %p ship.up)]
+          [%name s+(scot %tas name.up)]
+          [%uri s+(scot %tas uri.up)]
+          ::  add others?
+      ==
+    ::
+        %new-user
+      %-  pairs
+      :~  [%ship s+(scot %p ship.up)]
+          [%name s+(scot %tas name.up)]
+          [%uri s+(scot %tas uri.up)]
+          ::  add others?
+      ==
+    ::
+        %user
+      %-  pairs
+      :~  [%address s+(scot %ux address.up)]
+          [%ship ?~(ship.up [%s ''] s+(scot %p u.ship.up))]
+      ==
+    ::
+        %no-user    :: fix ~
+      (pairs ~[['s' %s '']])
+    ==
 --

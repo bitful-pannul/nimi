@@ -42,7 +42,16 @@
   [cards this]
   ::
   --
-++  on-watch  on-watch:def
+++  on-watch  ::  frontend
+  |=  =path
+  ^-  (quip card _this)
+  ?>  =(src our):bowl
+  ?+    path  ~|("watch to erroneous path" !!)
+  ::  path for frontend to connect to and receive
+  ::  all actively-flowing information. does not provide anything
+  ::  upon watch, only as it happens.
+    [%updates ~]  `this
+  ==
 ::
 ++  on-agent  on-agent:def
 ::
@@ -85,6 +94,10 @@
             !>(`action`[%sign-ship address.act])
     ==  ==
       %disme
+    :: check if present in addressbook
+    ::   =/  user  (~(get by niccbook) src.bowl)
+    ::   :: todo: reverse ?~ 
+    ::   ?~  user  
     :: scry chain, validate,
     =/  up  
       .^  update:indexer  %gx
@@ -113,8 +126,10 @@
     ::  note: try =.  instead
     :_  %=    state
           niccbook 
-          (~(put by niccbook) src.bowl [name uri.nft address.act item.act `sig.act])
+          %+  ~(put by niccbook)
+          src.bowl  [name uri.nft address.act item.act `sig.act]
         ==
+    ::  todo: remove %social-graph pokes.
     :~  :*  %pass  /add-tag
             %agent  [our.bowl %social-graph]
             %poke   %social-graph-edit
@@ -126,6 +141,12 @@
             %poke   %social-graph-edit
             !>
             [%nimi [%add-tag /address [%ship src.bowl] [%address address.act]]]
+        ==
+        :*  %give  %fact
+            ~[/updates]
+            %nimi-update
+            !>  ^-  update
+            [%ship src.bowl name uri.nft]
     ==  ==
     ::  
     ::
@@ -192,7 +213,8 @@
       ::
       ?~  pending  `state
       ::
-      =/  modified=(list item:smart)  (turn ~(val by modified.output.update) tail)
+      =/  modified=(list item:smart)  
+        (turn ~(val by modified.output.update) tail)
       ::  
       =|  id=(unit id:smart)
       =.  id
@@ -222,7 +244,8 @@
       ?>  ?=(^ origin.update)
       ?>  =([%nimi /sign-ship] u.origin.update)
       ::
-      :: store whole typed-message somewhere? or just the `@ux`sham of it like %wallet
+      :: store whole typed-message somewhere? 
+      :: or just the `@ux`sham of it like %wallet
       :_  state(sig.me `sig.update, pending ~)
       ~
   ==
@@ -231,7 +254,8 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
-      [%x %username @ ~]
+      [%x %user @ ~]
+    ::  if you know @t username, and are trying to get associated address & @p  
     =/  username  (slav %tas i.t.t.path)
     =+  lookupitem=(hash-data:smart minter-contract uqnames 0x0 username)
     =/  up
@@ -239,19 +263,20 @@
         (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
         /indexer/newest/item/(scot %ux 0x0)/(scot %ux lookupitem)/noun
       ==
-    ?~  up  ``noun+!>(`noun`[%nouser ~])
+    ?~  up  ``nimi-update+!>(`update`[%no-user ~])
     ?>  ?=(%newest-item -.up)
     =+  item=item.up
     ?>  ?=(%.y -.item)
     ::
     =/  data  ;;([@ux (unit @p)] noun.p.item)
-    ::  empty @p?
-    ``noun+!>(`noun`data)
+    ::  
+    ``nimi-update+!>(`update`[%user data])
   :: 
       [%x %ship @ ~]
     =/  ship  (slav %p i.t.t.path)
     =/  user  (~(get by niccbook) ship)
-    ``noun+!>(`noun`user)
+    ?~  user  ``nimi-update+!>(`update`[%no-user ~])
+    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user])
     ::
       [%x %ships @ ~]
     =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
@@ -259,6 +284,6 @@
       %+  turn  ships
       |=  =ship
       [ship (~(get by niccbook) ship)]
-    ``noun+!>(`noun`users)
+    ``nimi-update+!>(`update`[%ships users])
   ==
 --
