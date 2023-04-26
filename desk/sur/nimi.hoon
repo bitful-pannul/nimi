@@ -17,6 +17,7 @@
     [%mint name=@t uri=@t nft=@ux address=@ux ship=?]
     [%set-profile item=@ux address=@ux]
     [%sign-ship address=@ux]
+    [%find-ships ships=(list ship)]
   ==
 ::
 +$  sig  [v=@ r=@ s=@]
