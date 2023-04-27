@@ -22,8 +22,8 @@
 +$  update  :: scries, and sub updates.
   $%
     [%ships ships=(list [ship (unit profile)])]
-    [%ship =ship name=@t uri=@t]
-    [%new-user =ship name=@t uri=@t]
+    [%ship =ship name=@t uri=@t item=@ux]
+    [%new-user =ship name=@t uri=@t item=@ux]
     [%user address=@ux ship=(unit @p)]
     [%no-user ~]
   ==

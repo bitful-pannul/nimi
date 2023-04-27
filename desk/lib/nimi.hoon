@@ -4,49 +4,50 @@
 ::  todo revise bowl necessities => move into wrapper agent/core  
 /-  *nimi
 |% 
-  +$  profile        [name=@t uri=@t address=@ux item=@ux sig=(unit [@ @ @])]
+  ::  +$  profile        [name=@t uri=@t address=@ux item=@ux sig=(unit [@ @ @])]
   ::
-  ++  wrap-ship
-  |=  [=ship our=@p now=@da]
-  ^-  (unit profile)
-  ::  return ship too? [@p (unit profile)]
-  =/  up  .^  *  %gx
-        (scot %p our)  %nimi  (scot %da now)
-        /ship/(scot %p ship)/noun
-      ==
+  ::  todo remove if not used in apps/libs
+  ::  ++  wrap-ship
+  ::  |=  [=ship our=@p now=@da]
+  ::  ^-  (unit profile)
+  ::  ::  return ship too? [@p (unit profile)]
+  ::  =/  up  .^  *  %gx
+  ::        (scot %p our)  %nimi  (scot %da now)
+  ::        /ship/(scot %p ship)/noun
+  ::      ==
+  ::  ::
+  ::  ?~  up  ~
+  ::  ;;((unit profile) up)
+  ::  ::
+  ::  ++  wrap-ships
+  ::  |=  [ships=(list ship) our=@p now=@da]
+  ::  ::
+  ::  =/  up  .^  *  %gx
+  ::        (scot %p our)  %nimi  (scot %da now)
+  ::        /ships/(scot %ud (jam ships))/noun
+  ::      ==
+  ::  ::
+  ::  ?~  up  [~ ships]
+  ::  =/  users  ;;((list [ship (unit profile)]) up)
+  ::  ::
+  ::  =/  unknown
+  ::    %+  murn  users
+  ::    |=  [=ship us=(unit profile)]
+  ::    ?~  us  `ship
+  ::    ~
+  ::  [users unknown]
   ::
-  ?~  up  ~
-  ;;((unit profile) up)
-  ::
-  ++  wrap-ships
-  |=  [ships=(list ship) our=@p now=@da]
-  ::
-  =/  up  .^  *  %gx
-        (scot %p our)  %nimi  (scot %da now)
-        /ships/(scot %ud (jam ships))/noun
-      ==
-  ::
-  ?~  up  [~ ships]
-  =/  users  ;;((list [ship (unit profile)]) up)
-  ::
-  =/  unknown
-    %+  murn  users
-    |=  [=ship us=(unit profile)]
-    ?~  us  `ship
-    ~
-  [users unknown]
-  ::
-  ++  enjs-username
-    |=  [=ship our=@p now=@da]
-    =+  user=(wrap-ship ship our now)
-    ?~  user  ~
-    (scot %t name.u.user)
-  ::
-  ++  enjs-userpic
-    |=  [=ship our=@p now=@da]
-    =+  user=(wrap-ship ship our now)
-    ?~  user  ~
-    (scot %t uri.u.user)
+  ::  ++  enjs-username
+  ::    |=  [=ship our=@p now=@da]
+  ::    =+  user=(wrap-ship ship our now)
+  ::    ?~  user  ~
+  ::    (scot %t name.u.user)
+  ::  ::
+  ::  ++  enjs-userpic
+  ::    |=  [=ship our=@p now=@da]
+  ::    =+  user=(wrap-ship ship our now)
+  ::    ?~  user  ~
+  ::    (scot %t uri.u.user)
   ::
   ++  enjs-update
     =,  enjs:format
@@ -64,7 +65,8 @@
       :~  ::  ['ship' s+(scot %p ship)]
           ['name' ?~(p [%s ''] s+(scot %tas name.u.p))]
           ['uri' ?~(p [%s ''] s+(scot %tas uri.u.p))]
-          ::  could add item, address and sig too.
+          ['item' ?~(p [%s ''] s+(scot %ux item.u.p))]
+          ::  could add address and sig too.
       ==
     ::
         %ship
@@ -72,6 +74,7 @@
       :~  [%ship s+(scot %p ship.up)]
           [%name s+(scot %tas name.up)]
           [%uri s+(scot %tas uri.up)]
+          [%item s+(scot %ux item.up)]
           ::  add others?
       ==
     ::
@@ -80,6 +83,7 @@
       :~  [%ship s+(scot %p ship.up)]
           [%name s+(scot %tas name.up)]
           [%uri s+(scot %tas uri.up)]
+          [%item s+(scot %ux item.up)]
           ::  add others?
       ==
     ::

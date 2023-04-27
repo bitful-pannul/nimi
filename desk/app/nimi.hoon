@@ -51,6 +51,7 @@
   ::  all actively-flowing information. does not provide anything
   ::  upon watch, only as it happens.
     [%updates ~]  `this
+  ::  todo: watch batching logic for updated items...
   ==
 ::
 ++  on-agent  on-agent:def
@@ -95,59 +96,28 @@
     ==  ==
       %disme
     :: check if present in addressbook
-    ::   =/  user  (~(get by niccbook) src.bowl)
-    ::   :: todo: reverse ?~ 
-    ::   ?~  user  
-    :: scry chain, validate,
-    =/  up  
-      .^  update:indexer  %gx
-        (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
-        /indexer/newest/item/(scot %ux 0x0)/(scot %ux item.act)/noun
-      ==
+    :: todo: hoon magic to do cards and conditional better.
+    ?^  user=(~(get by niccbook) src.bowl)
+      ::
+      ?:  ?&  =(address.u.user address.act)
+              =(item.u.user item.act)
+          ==
+          `state
+      =/  return  (validate-scry +.act)
+      :_  %=    state
+            niccbook 
+            (~(put by niccbook) src.bowl -.return)
+          ==
+      +.return
+    =/  return  (validate-scry +.act)
     ::
-    ?>  ?=(%newest-item -.up)
-    =+  item=item.up
-    ~&  "item: {<item>}"
-    ::
-    ?>  ?=(%.y -.item)                
-    ?>  =(holder.p.item address.act)
-    ?>  =(source.p.item nft-contract)
-    ::
-    =/  nft  ;;(nft noun.p.item)
-    ~&  "nounnft: {<nft>}"
-    =/  name  (~(got by properties.nft) %name)
-    ::  
-    ?>  %-  uqbar-validate:sig
-        =+  salt=(cat 3 'nimi' src.bowl)
-        :+   address.act
-          (sham nimi-domain (sham nimi-type) salt) 
-        sig.act
-    ::
-    ::  note: try =.  instead
     :_  %=    state
           niccbook 
-          %+  ~(put by niccbook)
-          src.bowl  [name uri.nft address.act item.act `sig.act]
+          (~(put by niccbook) src.bowl -.return)
         ==
-    ::  todo: remove %social-graph pokes.
-    :~  :*  %pass  /add-tag
-            %agent  [our.bowl %social-graph]
-            %poke   %social-graph-edit
-            !>  
-            [%nimi [%add-tag /nickname [%ship src.bowl] [%address item.act]]]
-        ==
-        :*  %pass  /add-tag
-            %agent  [our.bowl %social-graph]
-            %poke   %social-graph-edit
-            !>
-            [%nimi [%add-tag /address [%ship src.bowl] [%address address.act]]]
-        ==
-        :*  %give  %fact
-            ~[/updates]
-            %nimi-update
-            !>  ^-  update
-            [%ship src.bowl name uri.nft]
-    ==  ==
+    +.return
+    ::
+    :: scry chain, validate
     ::  
     ::
       %sign-ship
@@ -250,6 +220,56 @@
       ~
   ==
 ::
+++  validate-scry
+  |=  [item-id=@ux address=@ux signature=[@ @ @]]
+  ^-  [profile (list card)]
+  ::
+  =/  up  
+      .^  update:indexer  %gx
+        (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
+        /indexer/newest/item/(scot %ux 0x0)/(scot %ux item-id)/noun
+      ==
+  ?>  ?=(%newest-item -.up)
+  =+  item=item.up
+  ~&  "item: {<item>}"
+  ::
+  ?>  ?=(%.y -.item)                
+  ?>  =(holder.p.item address)
+  ?>  =(source.p.item nft-contract)
+  ::
+  =/  nft  ;;(nft noun.p.item)
+  ~&  "nounnft: {<nft>}"
+  =/  name  (~(got by properties.nft) %name)
+  ::  
+  ?>  %-  uqbar-validate:sig
+      =+  salt=(cat 3 'nimi' src.bowl)
+      :+   address
+        (sham nimi-domain (sham nimi-type) salt) 
+      signature
+  ::
+  =/  who  [name uri.nft address item-id `signature]
+  ::
+  =/  effects
+    :~  :*  %pass  /add-tag
+            %agent  [our.bowl %social-graph]
+            %poke   %social-graph-edit
+            !>  
+            [%nimi [%add-tag /nickname [%ship src.bowl] [%address item-id]]]
+        ==
+        :*  %pass  /add-tag
+            %agent  [our.bowl %social-graph]
+            %poke   %social-graph-edit
+            !>
+            [%nimi [%add-tag /address [%ship src.bowl] [%address address]]]
+        ==
+        :*  %give  %fact
+            ~[/updates]
+            %nimi-update
+            !>  ^-  update
+            [%ship src.bowl name uri.nft item-id]
+    ==  ==
+  [who effects]
+::
 ++  handle-scry
   |=  =path
   ^-  (unit (unit cage))
@@ -276,7 +296,7 @@
     =/  ship  (slav %p i.t.t.path)
     =/  user  (~(get by niccbook) ship)
     ?~  user  ``nimi-update+!>(`update`[%no-user ~])
-    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user])
+    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user item.u.user])
     ::
       [%x %ships @ ~]
     =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
