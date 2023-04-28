@@ -77,7 +77,9 @@
           !>(`action`[%whodis ship.act])
       ==
     ::  someone asking us
-    ?~  sig.me  `state
+    ?~  sig.me  `state                    :: might want a "not yet poke"
+    ::                                    :: could store map ship unit profile instead
+    ::                                    :: maybe reduce amount of extra %whodis pokes from frontends
     ::
     :_  state  :_  ~
     :*  %pass   /disme
@@ -164,6 +166,17 @@
     %+  turn  ships.act
     |=  =ship
     [%pass /whodis %agent [ship %nimi] %poke %nimi-action !>([%whodis ship])]
+    ::
+    :_  state
+    pokes
+    ::
+      %tell-ships
+    ?>  =(our.bowl src.bowl)
+    ?~  sig.me  !!
+    =/  pokes 
+    %+  turn  ships.act
+    |=  =ship
+    [%pass /disme %agent [ship %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]
     ::
     :_  state
     pokes
@@ -297,13 +310,21 @@
     =/  user  (~(get by niccbook) ship)
     ?~  user  ``nimi-update+!>(`update`[%no-user ~])
     ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user item.u.user])
-    ::
+  ::
       [%x %ships @ ~]
     =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
     =/  users 
       %+  turn  ships
       |=  =ship
       [ship (~(get by niccbook) ship)]
+    ``nimi-update+!>(`update`[%ships users])
+  ::
+      [%x %niccbook ~]
+    ::  todo: add extra update/enjs conversion from map to list
+    ::        actually might be quicker here, we need to wrap profile in unit...
+    =/  users  
+      %+  turn  ~(tap by niccbook)
+      |=  [=ship =profile]  [ship `profile]
     ``nimi-update+!>(`update`[%ships users])
   ==
 --

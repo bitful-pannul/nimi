@@ -17,6 +17,7 @@
     [%set-profile item=@ux address=@ux]
     [%sign-ship address=@ux]
     [%find-ships ships=(list ship)]
+    [%tell-ships ships=(list ship)]
   ==
 ::
 +$  update  :: scries, and sub updates.

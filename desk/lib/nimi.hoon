@@ -96,4 +96,49 @@
         %no-user    :: fix ~
       (pairs ~[['s' %s '']])
     ==
+  ++  dejs-action
+    =,  dejs:format
+    |=  jon=json
+    ^-  action
+    =<  (decode jon)
+    |%
+    ++  decode
+      %-  of
+      :~  
+        [%whodis (se %p)]                     :: maybe tell ships? poke everyone like hey I'm @ass 
+        [%disme dejs-disme]    :: shouldn't poke this from frontend, make easier interface poke. 
+        [%mint dejs-mint]
+        [%set-profile dejs-setprofile]
+        [%sign-ship (se %ux)]
+        [%find-ships (ar (se %p))]
+        [%tell-ships (ar (se %p))]
+      ==
+    ++  dejs-mint
+      %-  ot
+      :~  [%name so]
+          [%uri so]
+          [%nft (se %ux)]
+          [%address (se %ux)]
+          [%ship bo]
+      ==
+    ++  dejs-setprofile
+      %-  ot 
+      :~  [%item (se %ux)]
+          [%address (se %ux)]
+      ==
+
+    ++  dejs-disme
+      %-  ot
+      :~  [%item (se %ux)]
+          [%address (se %ux)]
+          [%sig dejs-sig]
+      ==
+    ++  dejs-sig
+      ^-  $-(json [v=@ r=@ s=@])
+      %-  ot
+      :~  [%v (se %ud)]
+          [%r (se %ud)]
+          [%s (se %ud)]
+    ==
+  --
 --
