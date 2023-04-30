@@ -48,10 +48,8 @@
   ?>  =(src our):bowl
   ?+    path  ~|("watch to erroneous path" !!)
   ::  path for frontend to connect to and receive
-  ::  all actively-flowing information. does not provide anything
-  ::  upon watch, only as it happens.
+  ::  all actively-flowing information. does not provide any initial state.
     [%updates ~]  `this
-  ::  todo: watch batching logic for updated items...
   ==
 ::
 ++  on-agent  on-agent:def
@@ -91,36 +89,26 @@
       %set-profile
     ?>  =(our.bowl src.bowl)
     :_  state(me [name.me uri.me address.act item.act ~])
-    :~  :*  %pass   /pokeback 
-            %agent  [our.bowl %nimi] 
-            %poke   %nimi-action 
-            !>(`action`[%sign-ship address.act])
-    ==  ==
+    :_  ~
+    :*  %pass   /pokeback 
+        %agent  [our.bowl %nimi] 
+        %poke   %nimi-action 
+        !>(`action`[%sign-ship address.act])
+    ==
       %disme
     :: check if present in addressbook
-    :: todo: hoon magic to do cards and conditional better.
-    ?^  user=(~(get by niccbook) src.bowl)
-      ::
-      ?:  ?&  =(address.u.user address.act)
-              =(item.u.user item.act)
-          ==
-          `state
-      =/  return  (validate-scry +.act)
-      :_  %=    state
-            niccbook 
-            (~(put by niccbook) src.bowl -.return)
-          ==
-      +.return
-    =/  return  (validate-scry +.act)
     ::
-    :_  %=    state
-          niccbook 
-          (~(put by niccbook) src.bowl -.return)
+    =/  user=(unit profile)  (~(get by niccbook) src.bowl)
+    ::
+    ?:  ?&  ?=(^ user)
+            =(address.u.user address.act)
+            =(item.u.user item.act)
         ==
-    +.return
+      `state
     ::
-    :: scry chain, validate
-    ::  
+    =/  [cards=(list card) =profile]  (validate-scry +.act)
+    [cards state(niccbook (~(put by niccbook) src.bowl profile))]
+    ::
     ::
       %sign-ship
     ?>  =(src.bowl our.bowl)
@@ -130,7 +118,7 @@
         %poke   %wallet-poke
         !>  ^-  wallet-poke:wallet
         :*  %sign-typed-message
-            origin=`[%nimi /sign-ship]      :: note: needs PR merge 0.1.4
+            origin=`[%nimi /sign-ship] 
             from=address.act
             domain=nimi-domain
             type=nimi-type
@@ -164,8 +152,12 @@
     ?>  =(our.bowl src.bowl)
     =/  pokes 
     %+  turn  ships.act
-    |=  =ship
-    [%pass /whodis %agent [ship %nimi] %poke %nimi-action !>([%whodis ship])]
+      |=  =ship
+      :*  %pass   /disme
+          %agent  [ship %nimi]
+          %poke   %nimi-action
+          !>([%whodis ship])
+      ==
     ::
     :_  state
     pokes
@@ -175,9 +167,12 @@
     ?~  sig.me  !!
     =/  pokes 
     %+  turn  ships.act
-    |=  =ship
-    [%pass /disme %agent [ship %nimi] %poke %nimi-action !>([%disme item.me address.me u.sig.me])]
-    ::
+      |=  =ship
+      :*  %pass   /disme
+          %agent  [ship %nimi]
+          %poke   %nimi-action
+          !>([%disme item.me address.me u.sig.me])
+      ==
     :_  state
     pokes
   ==
@@ -235,7 +230,7 @@
 ::
 ++  validate-scry
   |=  [item-id=@ux address=@ux signature=[@ @ @]]
-  ^-  [profile (list card)]
+  ^-  [cards=(list card) =profile]
   ::
   =/  up  
       .^  update:indexer  %gx
@@ -244,14 +239,13 @@
       ==
   ?>  ?=(%newest-item -.up)
   =+  item=item.up
-  ~&  "item: {<item>}"
   ::
   ?>  ?=(%.y -.item)                
   ?>  =(holder.p.item address)
   ?>  =(source.p.item nft-contract)
   ::
   =/  nft  ;;(nft noun.p.item)
-  ~&  "nounnft: {<nft>}"
+  ::
   =/  name  (~(got by properties.nft) %name)
   ::  
   ?>  %-  uqbar-validate:sig
@@ -281,7 +275,7 @@
             !>  ^-  update
             [%ship src.bowl name uri.nft item-id]
     ==  ==
-  [who effects]
+  [effects who]
 ::
 ++  handle-scry
   |=  =path
