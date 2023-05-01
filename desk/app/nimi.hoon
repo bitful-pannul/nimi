@@ -65,6 +65,9 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
+    :: todo: origin for whodis? so other apps can poke
+    :: done in this branch: approve origin poke so mint goes through immediately, can be exploited?
+    :: other apps poke /nimi, 
       %whodis
     ::  us asking someone
     ?:  =(src.bowl our.bowl) 
@@ -130,23 +133,27 @@
     ::  mint a username/pfp
     ::  note: nft.act gets correctly set upon receipt
     :_  state(pending `[name.act uri.act address.act nft.act ~])  
-    :_  ~
-    :*  %pass   /nimi-mint
-        %agent  [our.bowl %uqbar]
-        %poke   %wallet-poke
-        !>  ^-  wallet-poke:wallet
-        :*  %transaction
-            origin=`[%nimi /mint-name]
-            from=address.act
-            contract=minter-contract
-            town=0x0
-            :-  %noun
-            :*  %mint
-                nft.act
-                name.act
-                uri.act
-                ship=?:(ship.act `our.bowl ~)
-    ==  ==  ==
+    :~  :*  %pass   /approve-nimi-origin
+            %agent  [our.bowl %wallet]
+            %poke   %wallet-poke
+            !>([%approve-origin [%nimi /mint-name] [rate=1 bud=1.000.000]])
+        ==
+        :*  %pass   /nimi-mint
+            %agent  [our.bowl %uqbar]
+            %poke   %wallet-poke
+            !>  ^-  wallet-poke:wallet
+            :*  %transaction
+                origin=`[%nimi /mint-name]
+                from=address.act
+                contract=minter-contract
+                town=0x0
+                :-  %noun
+                :*  %mint
+                    nft.act
+                    name.act
+                    uri.act
+                    ship=?:(ship.act `our.bowl ~)
+    ==  ==  ==  ==
     ::    
       %find-ships
     ?>  =(our.bowl src.bowl)
