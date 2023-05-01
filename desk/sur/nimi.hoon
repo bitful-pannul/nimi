@@ -18,6 +18,7 @@
     [%sign-ship address=@ux]
     [%find-ships ships=(list ship)]
     [%tell-ships ships=(list ship)]
+    ::  how about poke => effects + give-fact?
   ==
 ::
 +$  update  :: scries, and sub updates.
@@ -43,8 +44,8 @@
 ++  nimi-type    (pairs:enjs:format ~[[%ship [%s '@p']] [%salt [%s '@ud']]])  :: everyone just needs to sign/check the same thing
 ::
 ++  nft-contract     0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae
-++  minter-contract  0x414f.f84c.e3ff.c5e8.74d4.d226.7bcc.e9c4.9759.72e0.dca2.fb5e.5323.0dbb.dd62.93cd
-++  uqnames          0xa7.67a4.7079.04ca.de7f.69b7.adb9.d14d.6321.7c8a.39c8.f9d7.4dc8.54a7.7209.2526
+++  minter-contract  0x2fe5.7172.1781.4963.f986.5427.0163.2ace.35e3.c887.95ea.73a5.6d65.ea79.afd9.d63c
+++  uqnames          0xcbb6.908b.5635.7092.a085.b200.cfd6.2101.1e14.658b.5ef9.10e1.f626.b0d3.2fca.9755
 ::
 +$  ship-sig      [p=@ux q=ship r=life]
 -- 
