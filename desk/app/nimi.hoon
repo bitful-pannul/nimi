@@ -225,7 +225,13 @@
       :: store whole typed-message somewhere? 
       :: or just the `@ux`sham of it like %wallet
       :_  state(sig.me `sig.update, pending ~)
-      ~
+      :_  ~
+      :*  %give  %fact
+          ~[/updates]
+          %nimi-update
+          !>  ^-  ^update
+          [%ship our.bowl me]
+      ==
   ==
 ::
 ++  validate-scry
@@ -297,6 +303,7 @@
     ::
     =/  data  ;;([@ux (unit @p)] noun.p.item)
     ::  
+    ::  return @p in update too?
     ``nimi-update+!>(`update`[%user data])
   :: 
       [%x %ship @ ~]
@@ -314,7 +321,7 @@
     ``nimi-update+!>(`update`[%ships users])
   ::
       [%x %niccbook ~]
-    ::  might be quicker here than enjs, we need to wrap profile in unit...
+    ::  might be quicker here than enjs, we need to wrap profile in unit.
     =/  users  
       %+  turn  ~(tap by niccbook)
       |=  [=ship =profile]  [ship `profile]
