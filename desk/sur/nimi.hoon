@@ -5,8 +5,9 @@
 /+  smart=zig-sys-smart
 |%
 ::
-+$  profile  [name=@t uri=@t address=@ux item=@ux sig=(unit sig)]
-::
++$  profile  [name=@t uri=@t address=@ux item=@ux sig=(unit sig)]  ::
+::  note: sigs not exposed in scries? 
+::  
 +$  niccbook  (map ship profile)
 ::
 +$  action
@@ -24,8 +25,7 @@
 +$  update  :: scries, and sub updates.
   $%
     [%ships ships=(list [ship (unit profile)])]
-    [%ship =ship name=@t uri=@t item=@ux]
-    [%new-user =ship name=@t uri=@t item=@ux]
+    [%ship =ship =profile]
     [%user address=@ux ship=(unit @p)]
     [%no-user ~]
   ==

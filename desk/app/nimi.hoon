@@ -273,7 +273,7 @@
             ~[/updates]
             %nimi-update
             !>  ^-  update
-            [%ship src.bowl name uri.nft item-id]
+            [%ship src.bowl name uri.nft item-id address ~]
     ==  ==
   [effects who]
 ::
@@ -303,7 +303,7 @@
     =/  ship  (slav %p i.t.t.path)
     =/  user  (~(get by niccbook) ship)
     ?~  user  ``nimi-update+!>(`update`[%no-user ~])
-    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user item.u.user])
+    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user item.u.user address.u.user ~]) :: check empties
   ::
       [%x %ships @ ~]
     =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
@@ -314,11 +314,14 @@
     ``nimi-update+!>(`update`[%ships users])
   ::
       [%x %niccbook ~]
-    ::  todo: add extra update/enjs conversion from map to list
-    ::        actually might be quicker here, we need to wrap profile in unit...
+    ::  might be quicker here than enjs, we need to wrap profile in unit...
     =/  users  
       %+  turn  ~(tap by niccbook)
       |=  [=ship =profile]  [ship `profile]
     ``nimi-update+!>(`update`[%ships users])
+  ::
+      [%x %profile ~]
+    ?~  sig.me  ``nimi-update+!>(`update`[%no-user ~])  :: check empties
+    ``nimi-update+!>(`update`[%ship our.bowl name.me uri.me item.me address.me ~])
   ==
 --

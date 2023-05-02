@@ -66,24 +66,17 @@
           ['name' ?~(p [%s ''] s+(scot %tas name.u.p))]
           ['uri' ?~(p [%s ''] s+(scot %tas uri.u.p))]
           ['item' ?~(p [%s ''] s+(scot %ux item.u.p))]
-          ::  could add address and sig too.
+          ['address' ?~(p [%s ''] s+(scot %ux address.u.p))]
+          ::  could do sig too.
       ==
     ::
         %ship
       %-  pairs
       :~  [%ship s+(scot %p ship.up)]
-          [%name s+(scot %tas name.up)]
-          [%uri s+(scot %tas uri.up)]
-          [%item s+(scot %ux item.up)]
-          ::  add others?
-      ==
-    ::
-        %new-user
-      %-  pairs
-      :~  [%ship s+(scot %p ship.up)]
-          [%name s+(scot %tas name.up)]
-          [%uri s+(scot %tas uri.up)]
-          [%item s+(scot %ux item.up)]
+          [%name s+(scot %tas name.profile.up)]
+          [%uri s+(scot %tas uri.profile.up)]
+          [%item s+(scot %ux item.profile.up)]
+          [%address s+(scot %ux address.profile.up)]
           ::  add others?
       ==
     ::
