@@ -129,7 +129,7 @@
     ?>  =(our.bowl src.bowl)
     ::  mint a username/pfp
     ::  note: nft.act gets correctly set upon receipt
-    :_  state(pending `[name.act uri.act address.act nft.act ~])  
+    :_  state(pending `[name.act uri.act address.act uqnames ~])  
     :_  ~
     :*  %pass   /nimi-mint
         %agent  [our.bowl %uqbar]
@@ -142,7 +142,7 @@
             town=0x0
             :-  %noun
             :*  %mint
-                nft.act
+                uqnames
                 name.act
                 uri.act
                 ship=?:(ship.act `our.bowl ~)

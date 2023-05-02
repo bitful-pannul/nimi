@@ -110,7 +110,6 @@
       %-  ot
       :~  [%name so]
           [%uri so]
-          [%nft (se %ux)]
           [%address (se %ux)]
           [%ship bo]
       ==
