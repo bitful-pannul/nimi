@@ -3,7 +3,7 @@
 |%
 +$  state-0
   $:
-    me=profile
+    me=profile  :: unit too?
     pending=(unit profile)
     =niccbook
   ==
@@ -88,7 +88,11 @@
     ::
       %set-profile
     ?>  =(our.bowl src.bowl)
-    :_  state(me [name.me uri.me address.act item.act ~])
+    =/  i  (name-from-item item.act address.act)  :: destructure
+    ::
+    =/  name  (fall name.i '')
+    ::
+    :_  state(pending `[name uri.i address.act item.act ~])
     :_  ~
     :*  %pass   /pokeback 
         %agent  [our.bowl %nimi] 
@@ -211,7 +215,7 @@
       ::
       =/  new  u.pending
       =.  item.new  u.id
-      :_  state(me new)  :_  ~
+      :_  state(me new, pending ~)  :_  ~
       :*  %pass  /pokeback
           %agent  [our.bowl %nimi]
           %poke   %nimi-action
@@ -224,7 +228,20 @@
       ::
       :: store whole typed-message somewhere? 
       :: or just the `@ux`sham of it like %wallet
-      :_  state(sig.me `sig.update, pending ~)
+      ?~  pending
+        ::  %mint case 
+        :_  state(sig.me `sig.update)
+        :_  ~
+        :*  %give  %fact
+            ~[/updates]
+            %nimi-update
+            !>  ^-  ^update
+            [%ship our.bowl me]
+        ==
+      ::  %set-profile-case
+      =/  new  u.pending
+      =.  sig.new  `sig.update
+      :_  state(me new, pending ~)
       :_  ~
       :*  %give  %fact
           ~[/updates]
@@ -234,6 +251,25 @@
       ==
   ==
 ::
+++  name-from-item
+  |=  [item=@ux address=@ux]
+  ^-  [name=(unit @t) uri=@t]
+  =/  up  
+    .^  update:indexer  %gx
+      (scot %p our.bowl)  %uqbar  (scot %da now.bowl)
+      /indexer/newest/item/(scot %ux 0x0)/(scot %ux item)/noun
+    ==
+  ?>  ?=(%newest-item -.up)
+  =+  item=item.up
+  ::
+  ?>  ?=(%.y -.item)                
+  ?>  =(holder.p.item address)
+  ?>  =(source.p.item nft-contract)
+  =/  nft  ;;(nft noun.p.item)
+  =/  name  (~(get by properties.nft) %name)
+  ::
+  [name uri.nft]
+  ::
 ++  validate-scry
   |=  [item-id=@ux address=@ux signature=[@ @ @]]
   ^-  [cards=(list card) =profile]
@@ -252,7 +288,7 @@
   ::
   =/  nft  ;;(nft noun.p.item)
   ::
-  =/  name  (~(got by properties.nft) %name)
+  =/  name  (fall (~(get by properties.nft) %name) '')
   ::  
   ?>  %-  uqbar-validate:sig
       =+  salt=(cat 3 'nimi' src.bowl)
