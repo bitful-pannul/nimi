@@ -1,5 +1,5 @@
 /-  *nimi, indexer=zig-indexer, wallet=zig-wallet
-/+  smart=zig-sys-smart, sig=zig-sig, default-agent, dbug
+/+  smart=zig-sys-smart, sig=zig-sig, nimi, default-agent, dbug
 |%
 +$  state-0
   $:
@@ -88,7 +88,7 @@
     ::
       %set-profile
     ?>  =(our.bowl src.bowl)
-    =/  i  (name-from-item item.act address.act)  :: destructure
+    =/  i  (name-from-item item.act `address.act)  :: destructure
     ::
     =/  name  (fall name.i '')
     ::
@@ -252,7 +252,7 @@
   ==
 ::
 ++  name-from-item
-  |=  [item=@ux address=@ux]
+  |=  [item=@ux address=(unit @ux)]
   ^-  [name=(unit @t) uri=@t]
   =/  up  
     .^  update:indexer  %gx
@@ -262,9 +262,11 @@
   ?>  ?=(%newest-item -.up)
   =+  item=item.up
   ::
+  ::  todo change to husk:smart, almost the same
   ?>  ?=(%.y -.item)                
-  ?>  =(holder.p.item address)
   ?>  =(source.p.item nft-contract)
+  ?>  ?~(address %.y =(holder.p.item u.address))
+
   =/  nft  ;;(nft noun.p.item)
   =/  name  (~(get by properties.nft) %name)
   ::
@@ -324,7 +326,7 @@
   ^-  (unit (unit cage))
   ?+    path  ~|("unexpected scry into {<dap.bowl>} on path {<path>}" !!)
       [%x %user @ ~]
-    ::  if you know @t username, and are trying to get associated address & @p  
+    ::  if you know @t username, and are trying to get associated address, item & @p  
     =/  username  (slav %tas i.t.t.path)
     =+  lookupitem=(hash-data:smart minter-contract uqnames 0x0 username)
     =/  up
@@ -337,11 +339,26 @@
     =+  item=item.up
     ?>  ?=(%.y -.item)
     ::
-    =/  data  ;;([@ux (unit @p)] noun.p.item)
+    =/  data  ;;([address=@ux item=@ux ship=(unit @p)] noun.p.item)
+    ::  fix
+    =/  user  [address.data item.data ship.data ~ ~]
     ::  
     ::  return @p in update too?
-    ``nimi-update+!>(`update`[%user data])
+    ``nimi-update+!>(`update`[%user user])
   :: 
+      [%x %user %full @ ~]
+    ::  returns the equivalent of a %ship update
+    =/  up  
+      .^  update  %gx
+          (scot %p our.bowl)  %nimi  (scot %da now.bowl)
+          /user/(slav %tas i.t.t.t.path)/noun
+      ==
+    ?.  ?=(%user -.up)
+      ``nimi-update+!>(`update`up)  :: %no-user
+    ::
+    =/  i  (name-from-item item.up ~)
+    ``nimi-update+!>(`update`[%user address.up item.up ship.up name.i `uri.i])
+  ::
       [%x %ship @ ~]
     =/  ship  (slav %p i.t.t.path)
     =/  user  (~(get by niccbook) ship)

@@ -1,54 +1,7 @@
 ::  lib wrapper to access usernames
 ::  
-::
-::  todo revise bowl necessities => move into wrapper agent/core  
 /-  *nimi
 |% 
-  ::  +$  profile        [name=@t uri=@t address=@ux item=@ux sig=(unit [@ @ @])]
-  ::
-  ::  todo remove if not used in apps/libs
-  ::  ++  wrap-ship
-  ::  |=  [=ship our=@p now=@da]
-  ::  ^-  (unit profile)
-  ::  ::  return ship too? [@p (unit profile)]
-  ::  =/  up  .^  *  %gx
-  ::        (scot %p our)  %nimi  (scot %da now)
-  ::        /ship/(scot %p ship)/noun
-  ::      ==
-  ::  ::
-  ::  ?~  up  ~
-  ::  ;;((unit profile) up)
-  ::  ::
-  ::  ++  wrap-ships
-  ::  |=  [ships=(list ship) our=@p now=@da]
-  ::  ::
-  ::  =/  up  .^  *  %gx
-  ::        (scot %p our)  %nimi  (scot %da now)
-  ::        /ships/(scot %ud (jam ships))/noun
-  ::      ==
-  ::  ::
-  ::  ?~  up  [~ ships]
-  ::  =/  users  ;;((list [ship (unit profile)]) up)
-  ::  ::
-  ::  =/  unknown
-  ::    %+  murn  users
-  ::    |=  [=ship us=(unit profile)]
-  ::    ?~  us  `ship
-  ::    ~
-  ::  [users unknown]
-  ::
-  ::  ++  enjs-username
-  ::    |=  [=ship our=@p now=@da]
-  ::    =+  user=(wrap-ship ship our now)
-  ::    ?~  user  ~
-  ::    (scot %t name.u.user)
-  ::  ::
-  ::  ++  enjs-userpic
-  ::    |=  [=ship our=@p now=@da]
-  ::    =+  user=(wrap-ship ship our now)
-  ::    ?~  user  ~
-  ::    (scot %t uri.u.user)
-  ::
   ++  enjs-update
     =,  enjs:format
     |=  up=update
@@ -83,7 +36,10 @@
         %user
       %-  pairs
       :~  [%address s+(scot %ux address.up)]
+          [%item s+(scot %ux item.up)]
           [%ship ?~(ship.up [%s ''] s+(scot %p u.ship.up))]
+          [%name ?~(name.up [%s ''] s+(scot %tas u.name.up))]
+          [%uri ?~(uri.up [%s ''] s+(scot %tas u.uri.up))]
       ==
     ::
         %no-user    :: fix ~

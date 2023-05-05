@@ -55,9 +55,9 @@ get a poke-back
 	
 > verified, store in state&social-graph, display as username, optional back to @p. (settings & default).
 
-%minter/hoon deployed `0xa3fe.e174.a884.4777.41f6.860a.0e8d.ec56.6198.07a8.661a.2cf5.5c65.5ad9.40d4.5916`
+%minter/hoon deployed `0x7118.7e23.a8dc.6390.4c0b.f173.f3eb.f8a0.9b69.3597.0c0e.f648.64fc.94c2.6d01.d17b`
 
 nft contract `0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae`
 
-initial nameservice collection `0xf9c0.f5a5.7904.b0e3.42e3.2e55.c4b4.f98f.82cc.fce5.9f34.aa49.917e.4877.3a57.6ddc`
+initial nameservice collection `0xcbb6.908b.5635.7092.a085.b200.cfd6.2101.1e14.658b.5ef9.10e1.f626.b0d3.2fca.9755`
 
