@@ -43,8 +43,12 @@
 ++  nimi-type    (pairs:enjs:format ~[[%ship [%s '@p']] [%salt [%s '@ud']]])  :: everyone just needs to sign/check the same thing
 ::
 ++  nft-contract     0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae
-++  minter-contract  0xfb29.54e5.055c.786c.728c.1018.a61c.f33f.e7bb.de88.e5a7.9546.6397.0fe5.d6af.8bd6
-++  uqnames          0xc025.cbba.6236.b694.070c.73ee.4d4d.a544.fcdd.a6a0.66bb.4e0e.fca1.6400.f586.43db
+++  zigs-contract    0x74.6361.7274.6e6f.632d.7367.697a
+++  dec-18           1.000.000.000.000.000.000
+::
+++  minter-contract  0xee68.ced7.a4a8.a8f3.2b3f.95f9.1d6f.5247.38a4.d11b.21b6.3099.22a6.b0ef.736e.9e52
+++  uqnames          0x2797.07b1.bf2a.af92.baa8.338a.72f5.9561.9b9d.0b49.f0f5.3602.f1f3.6fe2.d35e.421a
+::0xebb1.2b42.12e5.d036.b7c1.a5a6.3cf5.1deb.0577.ddbd.1de7.4ee8.e9e4.9a16.394a.fbcb
 ::
 +$  ship-sig      [p=@ux q=ship r=life]
 -- 

@@ -43,8 +43,19 @@
     =/  propmap  %-  make-pmap
       ~[[%name name.act]]
     ::
+    =/  our-zigs-account  
+      (hash-data zigs-contract:lib id.caller.context town.context `@`'zigs')
+    ::
     =/  mintcalls=(list call)
-      :~  :+  nft-contract:lib 
+      :~  :+  zigs-contract:lib
+            town.context
+          :*  %take
+              to=this.context
+              amount=dec-18:lib
+              from=our-zigs-account
+          ==
+          ::
+          :+  nft-contract:lib 
             town.context
           :*  %mint
               nft.act
@@ -52,6 +63,14 @@
       ==  ==
     :-  mintcalls
     (result ~ [item ~] ~ ~)
+  ::
+      %on-push
+    =/  calldata  ;;(action:lib calldata.act)
+    ?>  =(-.calldata %mint)
+    %=  $
+      act  calldata
+      id.caller.context  from.act
+    ==
   ==
 ++  read
   |=  =pith

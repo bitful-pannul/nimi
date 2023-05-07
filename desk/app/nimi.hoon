@@ -131,8 +131,12 @@
     ::
       %mint
     ?>  =(our.bowl src.bowl)
-    ::  mint a username/pfp
+    ::  mint a username/pfp, uqnames cost 1 testnet zig currently
     ::  note: nft.act gets correctly set upon receipt
+    ::
+    =/  our-zigs-account  
+      (hash-data:smart zigs-contract address.act 0x0 `@`'zigs')
+    ::
     :_  state(pending `[name.act uri.act address.act nft.act ~])  
     :_  ~
     :*  %pass   /nimi-mint
@@ -142,15 +146,20 @@
         :*  %transaction
             origin=`[%nimi /mint-name]
             from=address.act
-            contract=minter-contract
+            contract=zigs-contract
             town=0x0
             :-  %noun
-            :*  %mint
-                nft.act
-                name.act
-                uri.act
-                ship=?:(ship.act `our.bowl ~)
-    ==  ==  ==
+            :*  %push
+                to=minter-contract
+                amount=dec-18
+                from=our-zigs-account
+                ::
+                :*  %mint
+                    nft.act
+                    name.act
+                    uri.act
+                    ship=?:(ship.act `our.bowl ~)
+    ==  ==  ==   ==
     ::    
       %find-ships
     ?>  =(our.bowl src.bowl)
