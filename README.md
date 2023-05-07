@@ -2,20 +2,13 @@
 
 > Simple usernames & pfp:s on uqbar. 
 
-Contracts enable this: 
+Contracts [`~bacdun` testnet]:
+  - minter.hoon `0xd8bf.084a.6e9a.abc0.c0b1.7b54.a05f.7633.e8fa.ddaf.d1df.1cda.2cf8.5f7d.8861.ded7`
+  - Uqnames `0x3ee1.a614.06c5.be2f.dfba.f017.39ff.4ecc.0b8f.5a94.b44c.83dc.c6cb.8fb5.3790.cede`
 
-#### %resolver
-	items, holder & source always the nft-name collection.
-	id=(hash-data nft-source nft-source town `@`'the-name.uqq')
-	noun: [=address ship=unit(@p) subdomains=(list @t)]
-
-if we mint these resolver items during mint of names, it enables reverse lookup.
+*If you want to build this locally on a fakeship chain, check dev-setup.md*
 
 #### %minter
-	all this does is take in at least a 'name' property, and a 'pfp'/'uri' one too.
-	then it posts a mint to the defined nft-item, and mints a resolver for it too.
-
-hmm. source & holder, will they match up if we mint from external contract? 
 
 Mint a username&picture. 
 `:nimi &nimi-action [%mint name=@t pfp=@t nft=@ux address=@ux]`
@@ -53,11 +46,3 @@ get a poke-back
 ::
 ```
 	
-> verified, store in state&social-graph, display as username, optional back to @p. (settings & default).
-
-%minter/hoon deployed `0xfb29.54e5.055c.786c.728c.1018.a61c.f33f.e7bb.de88.e5a7.9546.6397.0fe5.d6af.8bd6`
-
-nft contract `0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae`
-
-initial nameservice collection `0xc025.cbba.6236.b694.070c.73ee.4d4d.a544.fcdd.a6a0.66bb.4e0e.fca1.6400.f586.43db`
-

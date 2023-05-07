@@ -46,9 +46,9 @@
 ++  zigs-contract    0x74.6361.7274.6e6f.632d.7367.697a
 ++  dec-18           1.000.000.000.000.000.000
 ::
-++  minter-contract  0xee68.ced7.a4a8.a8f3.2b3f.95f9.1d6f.5247.38a4.d11b.21b6.3099.22a6.b0ef.736e.9e52
-++  uqnames          0x2797.07b1.bf2a.af92.baa8.338a.72f5.9561.9b9d.0b49.f0f5.3602.f1f3.6fe2.d35e.421a
-::0xebb1.2b42.12e5.d036.b7c1.a5a6.3cf5.1deb.0577.ddbd.1de7.4ee8.e9e4.9a16.394a.fbcb
+::  
+++  minter-contract  0xd8bf.084a.6e9a.abc0.c0b1.7b54.a05f.7633.e8fa.ddaf.d1df.1cda.2cf8.5f7d.8861.ded7
+++  uqnames          0x3ee1.a614.06c5.be2f.dfba.f017.39ff.4ecc.0b8f.5a94.b44c.83dc.c6cb.8fb5.3790.cede
 ::
 +$  ship-sig      [p=@ux q=ship r=life]
 -- 
