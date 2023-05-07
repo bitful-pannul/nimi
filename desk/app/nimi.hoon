@@ -88,6 +88,17 @@
     ::
       %set-profile
     ?>  =(our.bowl src.bowl)
+    ::  if item and address 0x0, clear profile
+    ?:  &(=(item.act 0x0) =(address.act 0x0))
+      :_  state(me *profile)
+      %+  turn  ~(tap in ~(key by niccbook))
+      |=  =ship
+      :*  %pass   /disme
+          %agent  [ship %nimi]
+          %poke   %nimi-action
+          !>([%disme [0x0 0x0 [0 0 0]]])
+      ==
+    ::
     =/  i  (name-from-item item.act `address.act)  :: destructure
     ::
     =/  name  (fall name.i '')
@@ -99,10 +110,16 @@
         %poke   %nimi-action 
         !>(`action`[%sign-ship address.act])
     ==
+    ::  poke everybody...?
       %disme
     :: check if present in addressbook
-    ::
     =/  user=(unit profile)  (~(get by niccbook) src.bowl)
+    ::
+    ::  if 0x0&0x0, remove from addressbok, revise
+    ?:  &(=(item.act 0x0) =(address.act 0x0))
+      ?~  user  `state
+      :-  ~
+      state(niccbook (~(del by niccbook) src.bowl))
     ::
     ?:  ?&  ?=(^ user)
             =(address.u.user address.act)
