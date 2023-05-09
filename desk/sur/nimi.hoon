@@ -6,7 +6,6 @@
 |%
 ::
 +$  profile  [name=@t uri=@t address=@ux item=@ux sig=(unit sig)]
-::  note: sigs not exposed in scries, empty @t:s is this ok? (each @p @t) seems overkill
 ::  
 +$  niccbook  (map ship profile)
 ::
@@ -21,7 +20,7 @@
     [%tell-ships ships=(list ship)]
   ==
 ::
-+$  update  :: scries, and sub updates.
++$  update  :: scries, and sub updates
   $%
     [%ships ships=(list [ship (unit profile)])]
     [%ship =ship =profile]
@@ -45,7 +44,7 @@
 ++  nft-contract     0xc7ac.2b08.6748.221b.8628.3813.5875.3579.01d9.2bbe.e6e8.d385.f8c3.b801.84fc.00ae
 ++  zigs-contract    0x74.6361.7274.6e6f.632d.7367.697a
 ++  dec-18           1.000.000.000.000.000.000
-::
+::  
 ::  
 ++  minter-contract  0xd8bf.084a.6e9a.abc0.c0b1.7b54.a05f.7633.e8fa.ddaf.d1df.1cda.2cf8.5f7d.8861.ded7
 ++  uqnames          0x3ee1.a614.06c5.be2f.dfba.f017.39ff.4ecc.0b8f.5a94.b44c.83dc.c6cb.8fb5.3790.cede

@@ -9,7 +9,7 @@
     %+  frond  -.up
     ?-    -.up
         %ships
-        ::  TODO handle empty name & uri well
+      ::
       %-  pairs
       %+  turn  ships.up
       |=  [s=@p p=(unit profile)]
@@ -54,8 +54,8 @@
     ++  decode
       %-  of
       :~  
-        [%whodis (se %p)]                     :: maybe tell ships? poke everyone like hey I'm @ass 
-        [%disme dejs-disme]    :: shouldn't poke this from frontend, make easier interface poke. 
+        [%whodis (se %p)]                     
+        [%disme dejs-disme]    
         [%mint dejs-mint]
         [%set-profile dejs-setprofile]
         [%sign-ship (se %ux)]

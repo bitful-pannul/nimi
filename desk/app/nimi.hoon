@@ -3,7 +3,7 @@
 |%
 +$  state-0
   $:
-    me=profile  :: unit too?
+    me=profile
     pending=(unit profile)
     =niccbook
   ==
@@ -42,7 +42,7 @@
   [cards this]
   ::
   --
-++  on-watch  ::  frontend
+++  on-watch
   |=  =path
   ^-  (quip card _this)
   ?>  =(src our):bowl
@@ -75,9 +75,7 @@
           !>(`action`[%whodis ship.act])
       ==
     ::  someone asking us
-    ?~  sig.me  `state                    :: might want a "not yet poke"
-    ::                                    :: could store map ship unit profile instead
-    ::                                    :: maybe reduce amount of extra %whodis pokes from frontends
+    ?~  sig.me  `state                    
     ::
     :_  state  :_  ~
     :*  %pass   /disme
@@ -110,7 +108,7 @@
         %poke   %nimi-action 
         !>(`action`[%sign-ship address.act])
     ==
-    ::  poke everybody...?
+  ::
       %disme
     :: check if present in addressbook
     =/  user=(unit profile)  (~(get by niccbook) src.bowl)
@@ -176,7 +174,7 @@
                     name.act
                     uri.act
                     ship=?:(ship.act `our.bowl ~)
-    ==  ==  ==   ==
+    ==  ==  ==  ==
     ::    
       %find-ships
     ?>  =(our.bowl src.bowl)
@@ -252,28 +250,40 @@
       ?>  ?=(^ origin.update)
       ?>  =([%nimi /sign-ship] u.origin.update)
       ::
-      :: store whole typed-message somewhere? 
-      :: or just the `@ux`sham of it like %wallet
       ?~  pending
         ::  %mint case 
         :_  state(sig.me `sig.update)
-        :_  ~
+        :~
+          :*  %give  %fact
+              ~[/updates]
+              %nimi-update
+              !>  ^-  ^update
+              [%ship our.bowl me]
+          ==
+          :*  %pass  /tell-ships
+              %agent  [our.bowl %nimi]
+              %poke   %nimi-action
+              !>  ^-  action
+              [%tell-ships ~(tap in ~(key by niccbook))]
+          ==
+        ==
+      ::  %set-profile-case
+      =/  new  u.pending
+      =.  sig.new  `sig.update
+      :_  state(me new, pending ~)
+      :~
         :*  %give  %fact
             ~[/updates]
             %nimi-update
             !>  ^-  ^update
             [%ship our.bowl me]
         ==
-      ::  %set-profile-case
-      =/  new  u.pending
-      =.  sig.new  `sig.update
-      :_  state(me new, pending ~)
-      :_  ~
-      :*  %give  %fact
-          ~[/updates]
-          %nimi-update
-          !>  ^-  ^update
-          [%ship our.bowl me]
+        :*  %pass  /tell-ships
+            %agent  [our.bowl %nimi]
+            %poke   %nimi-action
+            !>  ^-  action
+            [%tell-ships ~(tap in ~(key by niccbook))]
+        ==
       ==
   ==
 ::
@@ -369,7 +379,7 @@
     ::  fix
     =/  user  [address.data item.data ship.data ~ ~]
     ::  
-    ::  return @p in update too?
+    ::
     ``nimi-update+!>(`update`[%user user])
   :: 
       [%x %user %full @ ~]
@@ -389,7 +399,14 @@
     =/  ship  (slav %p i.t.t.path)
     =/  user  (~(get by niccbook) ship)
     ?~  user  ``nimi-update+!>(`update`[%no-user ~])
-    ``nimi-update+!>(`update`[%ship ship name.u.user uri.u.user item.u.user address.u.user ~]) :: check empties
+    =-  ``nimi-update+!>(`update`[%ship -])
+    :*  ship      
+        name.u.user 
+        uri.u.user  
+        item.u.user 
+        address.u.user 
+        ~
+    ==
   ::
       [%x %ships @ ~]
     =+  ships=;;((list @p) (cue (slav %ud i.t.t.path))) 
@@ -407,7 +424,14 @@
     ``nimi-update+!>(`update`[%ships users])
   ::
       [%x %profile ~]
-    ?~  sig.me  ``nimi-update+!>(`update`[%no-user ~])  :: check empties
-    ``nimi-update+!>(`update`[%ship our.bowl name.me uri.me item.me address.me ~])
+    ?~  sig.me  ``nimi-update+!>(`update`[%no-user ~])  
+    =-  ``nimi-update+!>(`update`[%ship -])
+    :*  our.bowl  
+        name.me 
+        uri.me 
+        item.me 
+        address.me
+        ~
+    ==
   ==
 --
